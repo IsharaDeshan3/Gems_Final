@@ -22,8 +22,12 @@ import {
   Trash2,
   Eye,
   EyeOff,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
   Image as ImageIcon,
   RefreshCw,
+  Calendar,
   Star,
 } from "lucide-react";
 
@@ -91,11 +95,11 @@ export default function AdminJewelleryPage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Inactive">(
-    "All"
-  );
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [priceRange, setPriceRange] = useState("All");
 
   const [editing, setEditing] = useState<AdminJewellery | null>(null);
   const [form, setForm] = useState({
@@ -126,11 +130,12 @@ export default function AdminJewelleryPage() {
     gem_treatments: "",
     gem_origin: "",
 
-    image_url: "",
+    images: [] as string[],
   });
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   async function fetchItems() {
     setLoading(true);
@@ -159,6 +164,7 @@ export default function AdminJewelleryPage() {
   }
 
   useEffect(() => {
+    setMounted(true);
     fetchItems();
   }, []);
 
@@ -182,18 +188,39 @@ export default function AdminJewelleryPage() {
       });
     }
 
-    if (statusFilter === "Active") {
-      result = result.filter((p) => p.is_active);
-    } else if (statusFilter === "Inactive") {
-      result = result.filter((p) => !p.is_active);
+    if (statusFilter !== "All") {
+      if (statusFilter === "Active") {
+        result = result.filter((p) => p.is_active);
+      } else if (statusFilter === "Inactive") {
+        result = result.filter((p) => !p.is_active);
+      } else if (statusFilter === "Out of Stock") {
+        result = result.filter((p) => p.stock_quantity === 0);
+      } else if (statusFilter === "Low Stock") {
+        result = result.filter(
+          (p) => p.stock_quantity > 0 && p.stock_quantity <= 5
+        );
+      }
+    }
+
+    if (priceRange !== "All") {
+      if (priceRange === "Under $1000") {
+        result = result.filter((p) => p.price < 1000);
+      } else if (priceRange === "$1000-$5000") {
+        result = result.filter((p) => p.price >= 1000 && p.price <= 5000);
+      } else if (priceRange === "$5000-$10000") {
+        result = result.filter((p) => p.price > 5000 && p.price <= 10000);
+      } else if (priceRange === "Over $10000") {
+        result = result.filter((p) => p.price > 10000);
+      }
     }
 
     return result;
-  }, [items, searchQuery, statusFilter]);
+  }, [items, searchQuery, statusFilter, priceRange]);
 
   function resetForm() {
     setEditing(null);
-    setSelectedFile(null);
+    setCreating(false);
+    setSelectedFiles([]);
     setForm({
       name: "",
       price: 0,
@@ -219,14 +246,15 @@ export default function AdminJewelleryPage() {
       gem_treatments: "",
       gem_origin: "",
 
-      image_url: "",
+      images: [],
     });
     setError(null);
   }
 
   function startEdit(item: AdminJewellery) {
     setEditing(item);
-    setSelectedFile(null);
+    setCreating(true);
+    setSelectedFiles([]);
     setForm({
       name: item.name,
       price: item.price,
@@ -258,7 +286,7 @@ export default function AdminJewelleryPage() {
       gem_treatments: item.gem_treatments || "",
       gem_origin: item.gem_origin || "",
 
-      image_url: item.image_url || item.images?.[0] || "",
+      images: item.images || [],
     });
     setError(null);
   }
@@ -307,15 +335,25 @@ export default function AdminJewelleryPage() {
     setError(null);
 
     try {
-      let imageUrl = form.image_url;
-      if (selectedFile) {
+      let allImages: string[] = [...form.images];
+
+      if (selectedFiles.length > 0) {
         setUploading(true);
         try {
-          imageUrl = await uploadImage(selectedFile);
-        } finally {
+          for (const file of selectedFiles) {
+            const uploadedUrl = await uploadImage(file);
+            allImages.push(uploadedUrl);
+          }
+        } catch (uploadError: any) {
+          setError(`Image upload failed: ${uploadError.message}`);
           setUploading(false);
+          setSaving(false);
+          return;
         }
+        setUploading(false);
       }
+
+      allImages = allImages.slice(0, 5);
 
       const payload: any = {
         name: form.name,
@@ -345,7 +383,7 @@ export default function AdminJewelleryPage() {
         gem_treatments: form.gem_treatments || undefined,
         gem_origin: form.gem_origin || undefined,
 
-        images: imageUrl ? [imageUrl] : [],
+        images: allImages,
       };
 
       const csrf = getCsrfTokenFromCookie();
@@ -496,51 +534,171 @@ export default function AdminJewelleryPage() {
     }
   }
 
+  function formatPrice(price: number) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(price);
+  }
+
+  function getStockBadgeColor(quantity: number) {
+    if (quantity === 0) return "from-red-500 to-pink-500";
+    if (quantity <= 5) return "from-orange-500 to-amber-500";
+    return "from-emerald-500 to-teal-500";
+  }
+
+  function getStockStatus(quantity: number) {
+    if (quantity === 0) return "Out of Stock";
+    if (quantity <= 5) return "Low Stock";
+    return "In Stock";
+  }
+
+  if (!mounted) {
+    return null;
+  }
+
+  const stats = {
+    total: items.length,
+    active: items.filter((p) => p.is_active).length,
+    outOfStock: items.filter((p) => p.stock_quantity === 0).length,
+    lowStock: items.filter(
+      (p) => p.stock_quantity > 0 && p.stock_quantity <= 5
+    ).length,
+    totalValue: items.reduce((sum, p) => sum + p.price * p.stock_quantity, 0),
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Diamond className="h-7 w-7" />
-          <div>
-            <h1 className="text-2xl font-bold">Jewellery</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage your certified jewellery products with gemstone details
-            </p>
+    <div className="admin-products-page space-y-8">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30">
+        <div className="absolute top-20 right-10 w-32 h-32 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full animate-pulse"></div>
+        <div
+          className="absolute bottom-20 left-10 w-24 h-24 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full animate-bounce"
+          style={{ animationDuration: "3s" }}
+        ></div>
+      </div>
+
+      {/* Header Section with Stats */}
+      <div className="relative z-10 backdrop-blur-md bg-white/80 dark:bg-slate-800/80 rounded-2xl p-6 shadow-2xl border border-white/20">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-lg">
+              <Diamond className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                Jewellery
+              </h1>
+              <p className="text-slate-600 dark:text-slate-400 mt-1">
+                Manage your certified jewellery products with gemstone details
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Button
+              onClick={() => {
+                setCreating(!creating);
+                setEditing(null);
+                resetForm();
+              }}
+              className={`${
+                creating
+                  ? "bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
+                  : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              } text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
+            >
+              {creating ? (
+                <XCircle className="h-5 w-5 mr-2" />
+              ) : (
+                <Plus className="h-5 w-5 mr-2" />
+              )}
+              {creating ? "Cancel" : "Add Jewellery"}
+            </Button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={fetchItems} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-          <Button onClick={resetForm} variant="secondary">
-            <Plus className="h-4 w-4 mr-2" />
-            New
-          </Button>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+          <div className="bg-white/60 dark:bg-slate-700/60 rounded-xl p-4 text-center">
+            <div className="text-2xl font-bold text-slate-800 dark:text-white">
+              {stats.total}
+            </div>
+            <div className="text-xs text-slate-600 dark:text-slate-400">
+              Total Products
+            </div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-700/60 rounded-xl p-4 text-center">
+            <div className="text-2xl font-bold text-emerald-600">
+              {stats.active}
+            </div>
+            <div className="text-xs text-slate-600 dark:text-slate-400">
+              Active
+            </div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-700/60 rounded-xl p-4 text-center">
+            <div className="text-2xl font-bold text-red-600">
+              {stats.outOfStock}
+            </div>
+            <div className="text-xs text-slate-600 dark:text-slate-400">
+              Out of Stock
+            </div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-700/60 rounded-xl p-4 text-center">
+            <div className="text-2xl font-bold text-orange-600">
+              {stats.lowStock}
+            </div>
+            <div className="text-xs text-slate-600 dark:text-slate-400">
+              Low Stock
+            </div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-700/60 rounded-xl p-4 text-center">
+            <div className="text-2xl font-bold text-purple-600">
+              {formatPrice(stats.totalValue)}
+            </div>
+            <div className="text-xs text-slate-600 dark:text-slate-400">
+              Total Value
+            </div>
+          </div>
         </div>
       </div>
 
-      {error ? (
-        <Card className="border-red-500/30">
-          <CardContent className="py-4 text-red-600">{error}</CardContent>
-        </Card>
-      ) : null}
+      {/* Error Alert */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+          <div className="flex items-center text-red-600 dark:text-red-400">
+            <AlertCircle className="h-4 w-4 mr-2" />
+            {error}
+          </div>
+        </div>
+      )}
 
       {/* Form with Two Sections */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{editing ? "Edit Jewellery" : "Add New Jewellery"}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* TOP SECTION: Jewellery Information */}
-          <div className="border rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-700">
-            <div className="flex items-center gap-2 mb-4">
-              <Diamond className="h-5 w-5 text-purple-600" />
-              <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-300">Jewellery Information</h3>
+      {(creating || editing) && (
+        <Card
+          className="backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border-0 shadow-2xl rounded-2xl overflow-hidden"
+          style={{ animation: "slideDown 0.5s ease-out" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5"></div>
+          <CardHeader className="relative z-10 bg-gradient-to-r from-slate-50 to-purple-50 dark:from-slate-800 dark:to-slate-700 border-b border-slate-200/50 dark:border-slate-600/50">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg shadow-lg">
+                <Diamond className="h-5 w-5 text-white" />
+              </div>
+              <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">
+                {editing ? "Edit Jewellery" : "Add New Jewellery"}
+              </CardTitle>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          </CardHeader>
+          <CardContent className="relative z-10 p-6 space-y-6">
+            {/* TOP SECTION: Jewellery Information */}
+            <div className="border rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-700">
+              <div className="flex items-center gap-2 mb-4">
+                <Diamond className="h-5 w-5 text-purple-600" />
+                <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-300">Jewellery Information</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label className="text-purple-700 dark:text-purple-300">Name *</Label>
                 <Input 
@@ -763,175 +921,438 @@ export default function AdminJewelleryPage() {
           {/* Image Upload Section */}
           <div className="border rounded-lg p-4">
             <Label className="flex items-center gap-2 mb-3">
-              <ImageIcon className="h-4 w-4" /> Product Image
+              <ImageIcon className="h-4 w-4" /> Product Images (Up to 5)
             </Label>
-            <div className="flex flex-col md:flex-row gap-3">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-              />
-              <Input
-                placeholder="Or paste image URL"
-                value={form.image_url}
-                onChange={(e) => setForm((p) => ({ ...p, image_url: e.target.value }))}
-              />
-            </div>
-            {(selectedFile || form.image_url) && (
-              <div className="mt-3 flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={selectedFile ? URL.createObjectURL(selectedFile) : form.image_url}
-                  alt="Preview"
-                  className="w-16 h-16 object-cover rounded-lg border"
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    const totalImages = form.images.length + selectedFiles.length + files.length;
+                    if (totalImages > 5) {
+                      setError("Maximum 5 images allowed");
+                      return;
+                    }
+                    setSelectedFiles([...selectedFiles, ...files]);
+                  }}
+                  className="hidden"
+                  id="jewellery-image-upload"
+                  disabled={form.images.length + selectedFiles.length >= 5}
                 />
-                <span className="text-sm text-muted-foreground">
-                  {selectedFile ? selectedFile.name : "URL Image"}
-                </span>
+                <label
+                  htmlFor="jewellery-image-upload"
+                  className={`flex items-center px-4 py-2 rounded-lg cursor-pointer transition-all ${
+                    form.images.length + selectedFiles.length >= 5
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600"
+                  }`}
+                >
+                  <ImageIcon className="h-4 w-4 mr-2" />
+                  Add Images ({form.images.length + selectedFiles.length}/5)
+                </label>
               </div>
-            )}
+
+              {form.images.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Existing Images:
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {form.images.map((url, index) => (
+                      <div key={`existing-${index}`} className="relative group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt={`Existing ${index + 1}`}
+                          className="w-20 h-20 object-cover rounded-lg border-2 border-slate-200 dark:border-slate-600"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setForm({ ...form, images: form.images.filter((_, i) => i !== index) });
+                          }}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedFiles.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    New Images to Upload:
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {selectedFiles.map((file, index) => (
+                      <div key={`new-${index}`} className="relative group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`New ${index + 1}`}
+                          className="w-20 h-20 object-cover rounded-lg border-2 border-blue-400"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+                          }}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                        >
+                          ✕
+                        </button>
+                        <p className="text-xs text-center mt-1 truncate w-20">{file.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-xs text-muted-foreground">
+                Upload up to 5 images for this product. Supported formats: JPG, PNG, WebP
+              </p>
+            </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            <Button onClick={saveItem} disabled={saving || uploading || !form.name}>
-              {saving ? "Saving..." : editing ? "Update Jewellery" : "Create Jewellery"}
-            </Button>
-            <Button variant="outline" onClick={resetForm}>
+          <div className="md:col-span-2 flex justify-end space-x-3">
+            <Button
+              variant="outline"
+              onClick={resetForm}
+              className="px-6"
+            >
               Cancel
             </Button>
-            {uploading && (
-              <span className="text-sm text-muted-foreground">Uploading image...</span>
-            )}
+            <Button
+              onClick={saveItem}
+              disabled={saving || uploading || !form.name}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg px-6"
+            >
+              {uploading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Uploading...
+                </>
+              ) : saving ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  {editing ? "Update Jewellery" : "Create Jewellery"}
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      )}
+
+      {/* Filters Section */}
+      <Card className="backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border-0 shadow-lg rounded-xl">
+        <CardContent className="p-6">
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-11 bg-white/60 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600 rounded-xl"
+              />
+            </div>
+
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="h-11 bg-white/60 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600 rounded-xl">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Status</SelectItem>
+                <SelectItem value="Active">Active</SelectItem>
+                <SelectItem value="Inactive">Inactive</SelectItem>
+                <SelectItem value="Out of Stock">Out of Stock</SelectItem>
+                <SelectItem value="Low Stock">Low Stock</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={priceRange} onValueChange={setPriceRange}>
+              <SelectTrigger className="h-11 bg-white/60 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600 rounded-xl">
+                <SelectValue placeholder="Price Range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Prices</SelectItem>
+                <SelectItem value="Under $1000">Under $1,000</SelectItem>
+                <SelectItem value="$1000-$5000">$1,000 - $5,000</SelectItem>
+                <SelectItem value="$5000-$10000">$5,000 - $10,000</SelectItem>
+                <SelectItem value="Over $10000">Over $10,000</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              onClick={() => {
+                setSearchQuery("");
+                setStatusFilter("All");
+                setPriceRange("All");
+              }}
+              variant="outline"
+              className="h-11 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Reset
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Items List */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <CardTitle>Jewellery Items</CardTitle>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="relative">
-                <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
-                <Input
-                  className="pl-9 w-72"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Select
-                value={statusFilter}
-                onValueChange={(v) => setStatusFilter(v as any)}
-              >
-                <SelectTrigger className="w-44">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All</SelectItem>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="py-8 text-center text-muted-foreground">Loading...</div>
-          ) : filteredItems.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">No items found.</div>
-          ) : (
-            <div className="space-y-3">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 border rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-md bg-muted overflow-hidden flex items-center justify-center">
-                      {item.image_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                      )}
-                    </div>
-                    <div>
-                      <div className="font-semibold">{item.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        ${item.price} • Stock: {item.stock_quantity}
-                      </div>
-                      <div className="mt-1 flex flex-wrap items-center gap-2">
-                        {item.is_month_highlight ? (
-                          <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-black">
-                            <Star className="h-3 w-3 mr-1" /> Highlight
-                          </Badge>
-                        ) : null}
-                        <Badge variant={item.is_active ? "default" : "secondary"}>
-                          {item.is_active ? "Active" : "Inactive"}
-                        </Badge>
-                        {item.metal_type_purity ? (
-                          <Badge variant="outline">{item.metal_type_purity}</Badge>
-                        ) : null}
-                        {item.gemstone_name ? (
-                          <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900">
-                            💎 {item.gemstone_name}
-                          </Badge>
-                        ) : null}
-                        {item.report_number ? (
-                          <Badge variant="outline">Report: {item.report_number}</Badge>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 scr-y">
+        {filteredItems.map((item, index) => (
+          <Card
+            key={item.id}
+            className="group backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border-0 shadow-lg hover:shadow-2xl rounded-xl overflow-hidden transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+            style={{
+              animationDelay: `${index * 0.1}s`,
+              animation: mounted ? "fadeInUp 0.6s ease-out forwards" : "none",
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 to-purple-50/50 dark:from-slate-800/50 dark:to-slate-700/50"></div>
 
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setMonthHighlight(item, !item.is_month_highlight)}
-                      disabled={saving}
-                      title={item.is_month_highlight ? "Remove monthly highlight" : "Set as monthly highlight"}
-                    >
-                      <Star className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => startEdit(item)}>
-                      <Edit3 className="h-4 w-4 mr-2" /> Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => toggleActive(item)}
-                      disabled={saving}
-                    >
-                      {item.is_active ? (
-                        <>
-                          <EyeOff className="h-4 w-4 mr-2" /> Hide
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="h-4 w-4 mr-2" /> Show
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => deleteItem(item)}
-                      disabled={saving}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+            {/* Product Image */}
+            <div className="relative h-48 overflow-hidden">
+              <img
+                src={
+                  item.image_url ||
+                  "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop"
+                }
+                alt={item.name}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop";
+                }}
+              />
+              <div className="absolute top-3 right-3 flex flex-col space-y-2">
+                {item.is_month_highlight ? (
+                  <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-black border-0 text-xs">
+                    <Star className="h-3 w-3 mr-1" /> Highlight
+                  </Badge>
+                ) : null}
+                <Badge
+                  className={`bg-gradient-to-r ${
+                    item.is_active
+                      ? "from-emerald-500 to-teal-500"
+                      : "from-red-500 to-pink-500"
+                  } text-white border-0 text-xs`}
+                >
+                  {item.is_active ? "Active" : "Inactive"}
+                </Badge>
+                <Badge
+                  className={`bg-gradient-to-r ${getStockBadgeColor(
+                    item.stock_quantity
+                  )} text-white border-0 text-xs`}
+                >
+                  {getStockStatus(item.stock_quantity)}
+                </Badge>
+              </div>
+            </div>
+
+            <CardContent className="relative z-10 p-4">
+              <div className="space-y-3">
+                <div>
+                  <h3 className="font-bold text-lg text-slate-800 dark:text-white line-clamp-1">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mt-1">
+                    {item.metal_type_purity ||
+                      item.gemstone_name ||
+                      item.report_number ||
+                      item.gem_identification ||
+                      ""}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {formatPrice(item.price)}
+                  </div>
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
+                    Stock: {item.stock_quantity}
                   </div>
                 </div>
-              ))}
+
+                <div className="text-xs text-slate-400 flex items-center">
+                  <Calendar className="h-3 w-3 mr-1" />
+                  Created {new Date(item.created_at).toLocaleDateString()}
+                </div>
+
+                {/* Actions */}
+                <div className="flex space-x-2 pt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setMonthHighlight(item, !item.is_month_highlight)}
+                    className="h-8 text-xs border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    title={item.is_month_highlight ? "Remove monthly highlight" : "Set as monthly highlight"}
+                  >
+                    <Star className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => startEdit(item)}
+                    className="flex-1 h-8 text-xs border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                  >
+                    <Edit3 className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => toggleActive(item)}
+                    className="h-8 text-xs border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    disabled={saving}
+                  >
+                    {item.is_active ? (
+                      <EyeOff className="h-3 w-3" />
+                    ) : (
+                      <Eye className="h-3 w-3" />
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => deleteItem(item)}
+                    className="h-8 text-xs bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 border-0"
+                    disabled={saving}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {filteredItems.length === 0 && (
+        <Card className="backdrop-blur-md bg-white/80 dark:bg-slate-800/80 border-0 shadow-lg rounded-xl">
+          <CardContent className="py-16 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 rounded-full flex items-center justify-center">
+              <Diamond className="h-8 w-8 text-slate-500 dark:text-slate-400" />
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              {items.length === 0
+                ? "No Jewellery Found"
+                : "No Jewellery Match Your Filters"}
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-4">
+              {items.length === 0
+                ? "Start building your jewellery collection by adding your first item."
+                : "Try adjusting your search criteria or filters to find more items."}
+            </p>
+            {items.length === 0 && (
+              <Button
+                onClick={() => {
+                  setCreating(true);
+                  setEditing(null);
+                  resetForm();
+                }}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add First Jewellery
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-2xl text-center">
+            <RefreshCw className="h-8 w-8 animate-spin text-purple-500 mx-auto mb-4" />
+            <p className="text-slate-700 dark:text-slate-300">Processing...</p>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .admin-products-page {
+          font-size: 1.6rem;
+        }
+
+        .admin-products-page * {
+          font-size: inherit;
+        }
+
+        .admin-products-page .text-xs {
+          font-size: 1.2rem;
+        }
+        .admin-products-page .text-sm {
+          font-size: 1.4rem;
+        }
+        .admin-products-page .text-base {
+          font-size: 1.6rem;
+        }
+        .admin-products-page .text-lg {
+          font-size: 1.8rem;
+        }
+        .admin-products-page .text-xl {
+          font-size: 2rem;
+        }
+        .admin-products-page .text-2xl {
+          font-size: 2.4rem;
+        }
+        .admin-products-page .text-3xl {
+          font-size: 3rem;
+        }
+
+        .line-clamp-1 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+
+        .line-clamp-2 {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
