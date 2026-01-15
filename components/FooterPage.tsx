@@ -56,7 +56,7 @@ const Footer = () => {
       { name: "Necklaces", href: "/collections/necklaces" },
       { name: "Earrings", href: "/collections/earrings" },
       { name: "Bracelets", href: "/collections/bracelets" },
-      { name: "Jwellery", href: "/jwellery" },
+      { name: "Jewellery", href: "/jewellery" },
       { name: "Gemstones", href: "/collections/gemstones" },
     ],
     services: [

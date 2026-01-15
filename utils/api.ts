@@ -15,10 +15,10 @@ function getOrderRepository() {
   return getRepositoryFactory(getSupabaseClient()).getOrderRepository();
 }
 
-// ✅ Jwellery
-export async function getJwelleryProducts(): Promise<Product[]> {
+// ✅ Jewellery
+export async function getJewelleryProducts(): Promise<Product[]> {
   try {
-    const response = await fetch('/api/jwellery', {
+    const response = await fetch('/api/jewellery', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -33,14 +33,14 @@ export async function getJwelleryProducts(): Promise<Product[]> {
     const data = await response.json();
     return data.products || [];
   } catch (error) {
-    console.error('Error fetching jwellery products:', error);
+    console.error('Error fetching jewellery products:', error);
     return [];
   }
 }
 
-export async function getJwelleryProductById(id: string): Promise<Product> {
+export async function getJewelleryProductById(id: string): Promise<Product> {
   try {
-    const response = await fetch(`/api/jwellery?id=${id}`, {
+    const response = await fetch(`/api/jewellery?id=${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ export async function getJwelleryProductById(id: string): Promise<Product> {
     const data = await response.json();
     return data.product;
   } catch (error) {
-    console.error('Error fetching jwellery product:', error);
+    console.error('Error fetching jewellery product:', error);
     throw error;
   }
 }

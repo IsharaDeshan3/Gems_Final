@@ -131,10 +131,10 @@
       "namedRegex": "^/admin/gems(?:/)?$"
     },
     {
-      "page": "/admin/jwellery",
-      "regex": "^/admin/jwellery(?:/)?$",
+      "page": "/admin/jewellery",
+      "regex": "^/admin/jewellery(?:/)?$",
       "routeKeys": {},
-      "namedRegex": "^/admin/jwellery(?:/)?$"
+      "namedRegex": "^/admin/jewellery(?:/)?$"
     },
     {
       "page": "/admin/login",
@@ -173,10 +173,16 @@
       "namedRegex": "^/collection(?:/)?$"
     },
     {
-      "page": "/jwellery",
-      "regex": "^/jwellery(?:/)?$",
+      "page": "/gems",
+      "regex": "^/gems(?:/)?$",
       "routeKeys": {},
-      "namedRegex": "^/jwellery(?:/)?$"
+      "namedRegex": "^/gems(?:/)?$"
+    },
+    {
+      "page": "/jewellery",
+      "regex": "^/jewellery(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/jewellery(?:/)?$"
     },
     {
       "page": "/payment/cancel",

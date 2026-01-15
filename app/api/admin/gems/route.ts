@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
       { field: 'treatments', type: 'string', required: false },
       { field: 'origin', type: 'string', required: false },
       { field: 'stock_quantity', type: 'number', required: false, min: 0, max: 100000 },
+      { field: 'is_month_highlight', type: 'boolean', required: false },
     ];
 
     const validationResult = validateInput(body, validationRules);
@@ -125,10 +126,19 @@ export async function POST(request: NextRequest) {
       images: body.images || [],
       stock_quantity: body.stock_quantity || 0,
       is_active: body.is_active !== undefined ? body.is_active : true,
+      is_month_highlight: body.is_month_highlight === true,
     };
 
     // Create gem
     const newGem = await gemRepository.create(gemData);
+
+    // Enforce single highlight
+    if (gemData.is_month_highlight) {
+      await (supabase as any)
+        .from('gems')
+        .update({ is_month_highlight: false })
+        .neq('id', newGem.id);
+    }
 
     // Log the action
     await auditLogRepository.create({
@@ -224,6 +234,7 @@ export async function PUT(request: NextRequest) {
       "images",
       "stock_quantity",
       "is_active",
+      "is_month_highlight",
     ];
 
     allowedFields.forEach((field) => {
@@ -231,6 +242,14 @@ export async function PUT(request: NextRequest) {
         updateData[field] = body[field];
       }
     });
+
+    // Enforce single highlight if setting true
+    if (updateData.is_month_highlight === true) {
+      await (supabase as any)
+        .from('gems')
+        .update({ is_month_highlight: false })
+        .neq('id', body.id);
+    }
 
     // Update gem
     const updatedGem = await gemRepository.update(body.id, updateData);

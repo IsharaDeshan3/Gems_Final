@@ -436,14 +436,14 @@ function Page() {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
-                    toast.success("Navigating to Jwellery!", { duration: 1200 });
+                    toast.success("Navigating to Jewellery!", { duration: 1200 });
                     setTimeout(() => {
-                      router.push("/jwellery");
+                      router.push("/jewellery");
                     }, 1200);
                   }}
                 >
                   <Sparkles size={20} />
-                  Explore Jwellery
+                  Explore Jewellery
                 </motion.button>
 
                 <button

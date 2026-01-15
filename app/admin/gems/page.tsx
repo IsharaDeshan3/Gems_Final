@@ -30,6 +30,7 @@ import {
   Tag,
   Calendar,
   ShoppingCart,
+  Star,
 } from "lucide-react";
 
 export interface AdminGem {
@@ -48,6 +49,7 @@ export interface AdminGem {
   image_url?: string;
   stock_quantity: number;
   is_active: boolean;
+  is_month_highlight?: boolean;
   created_at: string;
   updated_at?: string;
 }
@@ -60,6 +62,7 @@ function normalizeGem(gem: any): AdminGem {
     image_url: gem?.image_url ?? images[0] ?? "",
     stock_quantity: typeof gem?.stock_quantity === "number" ? gem.stock_quantity : 0,
     is_active: !!gem?.is_active,
+    is_month_highlight: !!gem?.is_month_highlight,
     created_at: gem?.created_at ?? new Date().toISOString(),
   } as AdminGem;
 }
@@ -77,7 +80,7 @@ export default function ProductsPage() {
   const [form, setForm] = useState({
     name: "",
     price: 0,
-    image_url: "",
+    images: [] as string[],
     stock_quantity: 0,
     active: true,
     identification: "",
@@ -89,7 +92,7 @@ export default function ProductsPage() {
     treatments: "",
     origin: "",
   });
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -178,7 +181,7 @@ export default function ProductsPage() {
     setForm({
       name: "",
       price: 0,
-      image_url: "",
+      images: [],
       stock_quantity: 0,
       active: true,
       identification: "",
@@ -190,7 +193,7 @@ export default function ProductsPage() {
       treatments: "",
       origin: "",
     });
-    setSelectedFile(null);
+    setSelectedFiles([]);
     setError(null);
   }
 
@@ -199,7 +202,7 @@ export default function ProductsPage() {
     setForm({
       name: product.name,
       price: product.price,
-      image_url: product.image_url || product.images?.[0] || "",
+      images: product.images || [],
       stock_quantity: product.stock_quantity,
       active: product.is_active,
       identification: product.identification || "",
@@ -211,7 +214,7 @@ export default function ProductsPage() {
       treatments: product.treatments || "",
       origin: product.origin || "",
     });
-    setSelectedFile(null);
+    setSelectedFiles([]);
     setCreating(false);
   }
 
@@ -245,16 +248,35 @@ export default function ProductsPage() {
 
   async function saveProduct() {
     setError(null);
+    
+    // Validate required fields: only name, price, and quantity are mandatory
+    if (!form.name.trim()) {
+      setError("Product name is required");
+      return;
+    }
+    if (form.price <= 0) {
+      setError("Price must be greater than 0");
+      return;
+    }
+    if (form.stock_quantity < 0) {
+      setError("Stock quantity cannot be negative");
+      return;
+    }
+    
     setLoading(true);
 
     try {
-      let imageUrl = form.image_url;
+      // Upload new files and collect all image URLs
+      let allImages: string[] = [...form.images];
 
-      // If a file is selected, upload it first
-      if (selectedFile) {
+      // If files are selected, upload them first
+      if (selectedFiles.length > 0) {
         setUploading(true);
         try {
-          imageUrl = await uploadImage(selectedFile);
+          for (const file of selectedFiles) {
+            const uploadedUrl = await uploadImage(file);
+            allImages.push(uploadedUrl);
+          }
         } catch (uploadError: any) {
           setError(`Image upload failed: ${uploadError.message}`);
           setUploading(false);
@@ -264,8 +286,8 @@ export default function ProductsPage() {
         setUploading(false);
       }
 
-      // Use either uploaded image URL or provided URL
-      const finalImageUrl = imageUrl || form.image_url;
+      // Limit to 5 images max
+      allImages = allImages.slice(0, 5);
 
       if (editing) {
         // Update existing product via API
@@ -289,15 +311,15 @@ export default function ProductsPage() {
               price: form.price,
               stock_quantity: form.stock_quantity,
               is_active: form.active,
-              images: finalImageUrl ? [finalImageUrl] : [],
-              identification: form.identification,
-              weight_carats: form.weight_carats,
-              color: form.color,
-              clarity: form.clarity,
-              shape_and_cut: form.shape_and_cut,
-              dimensions: form.dimensions,
-              treatments: form.treatments,
-              origin: form.origin,
+              images: allImages,
+              identification: form.identification || undefined,
+              weight_carats: form.weight_carats || undefined,
+              color: form.color || undefined,
+              clarity: form.clarity || undefined,
+              shape_and_cut: form.shape_and_cut || undefined,
+              dimensions: form.dimensions || undefined,
+              treatments: form.treatments || undefined,
+              origin: form.origin || undefined,
             }),
           });
 
@@ -339,15 +361,15 @@ export default function ProductsPage() {
               price: form.price,
               stock_quantity: form.stock_quantity,
               is_active: form.active,
-              images: finalImageUrl ? [finalImageUrl] : [],
-              identification: form.identification,
-              weight_carats: form.weight_carats,
-              color: form.color,
-              clarity: form.clarity,
-              shape_and_cut: form.shape_and_cut,
-              dimensions: form.dimensions,
-              treatments: form.treatments,
-              origin: form.origin,
+              images: allImages,
+              identification: form.identification || undefined,
+              weight_carats: form.weight_carats || undefined,
+              color: form.color || undefined,
+              clarity: form.clarity || undefined,
+              shape_and_cut: form.shape_and_cut || undefined,
+              dimensions: form.dimensions || undefined,
+              treatments: form.treatments || undefined,
+              origin: form.origin || undefined,
             }),
           });
 
@@ -449,6 +471,49 @@ export default function ProductsPage() {
     } catch (err) {
       console.error("Error updating product:", err);
       setError("Failed to update product");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function setMonthHighlight(product: AdminGem, enabled: boolean) {
+    setLoading(true);
+    setError(null);
+    try {
+      const csrf =
+        document.cookie
+          .split("; ")
+          .find((r) => r.startsWith("csrfToken="))
+          ?.split("=")[1] || "";
+
+      const response = await fetch("/api/admin/gems", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrf,
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          id: product.id,
+          is_month_highlight: enabled,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update highlight");
+      }
+
+      setProducts((prev) =>
+        prev.map((p) => {
+          if (enabled) {
+            return { ...p, is_month_highlight: p.id === product.id };
+          }
+          return p.id === product.id ? { ...p, is_month_highlight: false } : p;
+        })
+      );
+    } catch (err) {
+      console.error("Error updating highlight:", err);
+      setError("Failed to update highlight");
     } finally {
       setLoading(false);
     }
@@ -778,83 +843,99 @@ export default function ProductsPage() {
               <div className="space-y-3 md:col-span-2">
                 <Label className="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
                   <ImageIcon className="h-4 w-4 mr-2" />
-                  Product Image
+                  Product Images (Up to 5)
                 </Label>
 
-                {/* File Upload */}
+                {/* Multiple File Upload */}
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <input
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setSelectedFile(file);
-                          setForm({ ...form, image_url: "" }); // Clear URL when file is selected
+                        const files = Array.from(e.target.files || []);
+                        const totalImages = form.images.length + selectedFiles.length + files.length;
+                        if (totalImages > 5) {
+                          setError("Maximum 5 images allowed");
+                          return;
                         }
+                        setSelectedFiles([...selectedFiles, ...files]);
                       }}
                       className="hidden"
                       id="image-upload"
+                      disabled={form.images.length + selectedFiles.length >= 5}
                     />
                     <label
                       htmlFor="image-upload"
-                      className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl cursor-pointer hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+                      className={`flex items-center px-4 py-2 rounded-xl cursor-pointer transition-all duration-300 ${
+                        form.images.length + selectedFiles.length >= 5
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600"
+                      }`}
                     >
                       <ImageIcon className="h-4 w-4 mr-2" />
-                      Choose Image
+                      Add Images ({form.images.length + selectedFiles.length}/5)
                     </label>
-                    {selectedFile && (
-                      <span className="text-sm text-slate-600 dark:text-slate-400">
-                        {selectedFile.name}
-                      </span>
-                    )}
                   </div>
 
-                  {/* Image Preview */}
-                  {(selectedFile || form.image_url) && (
-                    <div className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                      <img
-                        src={selectedFile ? URL.createObjectURL(selectedFile) : form.image_url}
-                        alt="Preview"
-                        className="w-16 h-16 object-cover rounded-lg border border-slate-200 dark:border-slate-600"
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                          Image Preview
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {selectedFile ? `${selectedFile.name} (${(selectedFile.size / 1024 / 1024).toFixed(2)} MB)` : "URL Image"}
-                        </p>
+                  {/* Existing Images Preview */}
+                  {form.images.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Existing Images:</p>
+                      <div className="flex flex-wrap gap-3">
+                        {form.images.map((url, index) => (
+                          <div key={`existing-${index}`} className="relative group">
+                            <img
+                              src={url}
+                              alt={`Existing ${index + 1}`}
+                              className="w-20 h-20 object-cover rounded-lg border-2 border-slate-200 dark:border-slate-600"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setForm({ ...form, images: form.images.filter((_, i) => i !== index) });
+                              }}
+                              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                      <button
-                        onClick={() => {
-                          setSelectedFile(null);
-                          setForm({ ...form, image_url: "" });
-                        }}
-                        className="text-red-500 hover:text-red-700 p-1"
-                      >
-                        ✕
-                      </button>
                     </div>
                   )}
 
-                  {/* URL Input as Alternative */}
-                  <div className="text-center text-slate-500 dark:text-slate-400 text-sm mb-2">
-                    — OR —
-                  </div>
-                  <Input
-                    value={form.image_url}
-                    onChange={(e) => {
-                      setForm({ ...form, image_url: e.target.value });
-                      if (e.target.value) setSelectedFile(null); // Clear file when URL is entered
-                    }}
-                    className="h-12 bg-white/60 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600 rounded-xl"
-                    placeholder="https://example.com/sapphire.jpg"
-                    disabled={!!selectedFile}
-                  />
+                  {/* New Files Preview */}
+                  {selectedFiles.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">New Images to Upload:</p>
+                      <div className="flex flex-wrap gap-3">
+                        {selectedFiles.map((file, index) => (
+                          <div key={`new-${index}`} className="relative group">
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`New ${index + 1}`}
+                              className="w-20 h-20 object-cover rounded-lg border-2 border-blue-400"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+                              }}
+                              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                            >
+                              ✕
+                            </button>
+                            <p className="text-xs text-center mt-1 truncate w-20">{file.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Enter an image URL or upload a file above
+                    Upload up to 5 images for this product. Supported formats: JPG, PNG, WebP
                   </p>
                 </div>
               </div>
@@ -998,6 +1079,11 @@ export default function ProductsPage() {
                 }}
               />
               <div className="absolute top-3 right-3 flex flex-col space-y-2">
+                {product.is_month_highlight ? (
+                  <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-black border-0 text-xs">
+                    <Star className="h-3 w-3 mr-1" /> Highlight
+                  </Badge>
+                ) : null}
                 <Badge
                   className={`bg-gradient-to-r ${
                     product.is_active
@@ -1044,6 +1130,15 @@ export default function ProductsPage() {
 
                 {/* Actions */}
                 <div className="flex space-x-2 pt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setMonthHighlight(product, !product.is_month_highlight)}
+                    className="h-8 text-xs border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    title={product.is_month_highlight ? "Remove monthly highlight" : "Set as monthly highlight"}
+                  >
+                    <Star className="h-3 w-3" />
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"

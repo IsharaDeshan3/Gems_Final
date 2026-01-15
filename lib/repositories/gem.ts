@@ -17,6 +17,7 @@ export interface Gem {
   images?: string[]
   stock_quantity: number
   is_active: boolean
+  is_month_highlight?: boolean
   created_at: string
   updated_at: string
 }

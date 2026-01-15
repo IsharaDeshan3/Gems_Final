@@ -5,7 +5,9 @@
 
 import { describe, it, expect } from '@jest/globals';
 
-describe('Full User Flow Integration Test', () => {
+const describeIntegration = process.env.RUN_INTEGRATION_TESTS === 'true' ? describe : describe.skip;
+
+describeIntegration('Full User Flow Integration Test', () => {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   let authToken: string;
   let userId: string;

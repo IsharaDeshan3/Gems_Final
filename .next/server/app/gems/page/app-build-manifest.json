@@ -1,0 +1,20 @@
+{
+  "pages": {
+    "/gems/page": [
+      "static/chunks/d57c34f9de506897.css",
+      "static/chunks/585621208153f93a.css",
+      "static/chunks/7dd66bdf8a7e5707.js",
+      "static/chunks/37153e8eee54b0e9.js",
+      "static/chunks/3341f1fd2cf6ade7.js",
+      "static/chunks/37b430b323794231.js",
+      "static/chunks/686a2c00ba9bce9c.js",
+      "static/chunks/3d395e2ea1dd1409.js",
+      "static/chunks/dd4d9f00303d8002.js",
+      "static/chunks/6ade8622d5cd9138.js",
+      "static/chunks/674649e7dad9f6b4.js",
+      "static/chunks/c262c49f15ce2f1f.js",
+      "static/chunks/2648bd3bff8c5abe.js",
+      "static/chunks/turbopack-eda9ef68caaf601e.js"
+    ]
+  }
+}

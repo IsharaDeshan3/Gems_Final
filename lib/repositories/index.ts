@@ -2,7 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@/types/supabase'
 import { UserRepository, UserRepositoryImpl } from './user'
 import { GemRepository, GemRepositoryImpl } from './gem'
-import { JwelleryRepository, JwelleryRepositoryImpl } from './jwellery'
+import { JewelleryRepository, JewelleryRepositoryImpl } from './jewellery'
 import { OrderRepository, OrderRepositoryImpl } from './order'
 import { AuditLogRepository, AuditLogRepositoryImpl } from './audit-log'
 import { PaymentRepository } from './PaymentRepository'
@@ -10,7 +10,7 @@ import { PaymentRepository } from './PaymentRepository'
 export interface RepositoryFactory {
   getUserRepository(): UserRepository
   getGemRepository(): GemRepository
-  getJwelleryRepository(): JwelleryRepository
+  getJewelleryRepository(): JewelleryRepository
   getOrderRepository(): OrderRepository
   getAuditLogRepository(): AuditLogRepository
   getPaymentRepository(): PaymentRepository
@@ -22,7 +22,7 @@ export class RepositoryFactoryImpl implements RepositoryFactory {
   // Repository instances (lazy-loaded)
   private userRepository?: UserRepository
   private gemRepository?: GemRepository
-  private jwelleryRepository?: JwelleryRepository
+  private jewelleryRepository?: JewelleryRepository
   private orderRepository?: OrderRepository
   private auditLogRepository?: AuditLogRepository
   private paymentRepository?: PaymentRepository
@@ -45,11 +45,11 @@ export class RepositoryFactoryImpl implements RepositoryFactory {
     return this.gemRepository
   }
 
-  getJwelleryRepository(): JwelleryRepository {
-    if (!this.jwelleryRepository) {
-      this.jwelleryRepository = new JwelleryRepositoryImpl(this.supabase)
+  getJewelleryRepository(): JewelleryRepository {
+    if (!this.jewelleryRepository) {
+      this.jewelleryRepository = new JewelleryRepositoryImpl(this.supabase)
     }
-    return this.jwelleryRepository
+    return this.jewelleryRepository
   }
 
   getOrderRepository(): OrderRepository {
@@ -91,5 +91,5 @@ export function getRepositoryFactory(supabase: SupabaseClient<Database>): Reposi
 }
 
 // Export types for convenience
-export type { UserRepository, GemRepository, JwelleryRepository, OrderRepository, AuditLogRepository }
-export { UserRepositoryImpl, GemRepositoryImpl, JwelleryRepositoryImpl, OrderRepositoryImpl, AuditLogRepositoryImpl, PaymentRepository }
+export type { UserRepository, GemRepository, JewelleryRepository, OrderRepository, AuditLogRepository }
+export { UserRepositoryImpl, GemRepositoryImpl, JewelleryRepositoryImpl, OrderRepositoryImpl, AuditLogRepositoryImpl, PaymentRepository }

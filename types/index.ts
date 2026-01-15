@@ -12,6 +12,7 @@ export interface Product {
   stock?: number; // Alias for stock_quantity
   active: boolean;
   is_active?: boolean; // Alias for active
+  is_month_highlight?: boolean;
   specifications?: {
     identification?: string;
     weight_carats?: string;

@@ -3,14 +3,17 @@ import { createClient } from '@supabase/supabase-js';
 import { UserRepositoryImpl } from '@/lib/repositories/user';
 import { Database } from '@/types/supabase';
 
+const hasSupabaseEnv = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+const describeSupabase = process.env.RUN_SUPABASE_TESTS === 'true' && hasSupabaseEnv ? describe : describe.skip;
+
 const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://invalid.local',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'invalid'
 );
 
 const userRepo = new UserRepositoryImpl(supabase);
 
-describe('UserRepository', () => {
+describeSupabase('UserRepository', () => {
   let testUserId: string;
 
   beforeAll(async () => {
@@ -20,7 +23,11 @@ describe('UserRepository', () => {
       password: 'Test123!@#',
       email_confirm: true
     });
-    testUserId = data.user!.id;
+
+		if (!data?.user?.id) {
+			throw new Error('Failed to create Supabase test user (check RUN_SUPABASE_TESTS + env vars)');
+		}
+		testUserId = data.user.id;
   });
 
   afterAll(async () => {

@@ -2,19 +2,19 @@
   "pages": {
     "/admin/page": [
       "static/chunks/d57c34f9de506897.css",
-      "static/chunks/6f0962ef5086cbf9.css",
+      "static/chunks/585621208153f93a.css",
       "static/chunks/7dd66bdf8a7e5707.js",
-      "static/chunks/e7a9ff200737c77b.js",
-      "static/chunks/ddd838ac6d430718.js",
-      "static/chunks/b586bacfc46ae208.js",
-      "static/chunks/e9a0ebe7e897419d.js",
+      "static/chunks/37153e8eee54b0e9.js",
+      "static/chunks/3341f1fd2cf6ade7.js",
+      "static/chunks/75e64a528734e5ed.js",
+      "static/chunks/fa436570c3167164.js",
       "static/chunks/9035454571fc764a.js",
-      "static/chunks/7fc4f2a04b391c03.js",
-      "static/chunks/c86173bb468d3973.js",
-      "static/chunks/7880f8283a6f3daf.js",
-      "static/chunks/d54b50666d053b37.js",
-      "static/chunks/2008ffcf9e5b170c.js",
-      "static/chunks/turbopack-44482bf944871cbb.js"
+      "static/chunks/dd4d9f00303d8002.js",
+      "static/chunks/6ade8622d5cd9138.js",
+      "static/chunks/674649e7dad9f6b4.js",
+      "static/chunks/c262c49f15ce2f1f.js",
+      "static/chunks/2648bd3bff8c5abe.js",
+      "static/chunks/turbopack-eda9ef68caaf601e.js"
     ]
   }
 }

@@ -1,28 +1,20 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
-import { Sparkles, Diamond, Crown, Gem } from "lucide-react";
+import { Sparkles, Diamond, Crown } from "lucide-react";
 
 function Navbar() {
-  const pathname = usePathname();
-  const isAdminRoute = pathname.startsWith("/admin");
   // Always show compact navbar
   const [isOpen, setIsOpen] = useState(false);
-
-  // Don't render navbar on admin routes
-  if (isAdminRoute) {
-    return null;
-  }
 
   // No scroll/collapse logic needed
 
   // Navigation items with icons
   const navItems = [
     { name: "Home", href: "/", icon: <Crown size={22.4} /> },
-    { name: "Gems", href: "/collection", icon: <Diamond size={22.4} /> },
-    { name: "Jwellery", href: "/jwellery", icon: <Gem size={22.4} /> },
+    { name: "Gems", href: "/gems", icon: <Diamond size={22.4} /> },
+    { name: "Jewellery", href: "/jewellery", icon: <Crown size={22.4} /> },
     { name: "Academy", href: "/academy", icon: <Sparkles size={22.4} /> },
     { name: "About", href: "/about", icon: <Crown size={22.4} /> },
   ];
@@ -76,12 +68,9 @@ function Navbar() {
               transition={{ duration: 0.5 }}
             >
               <motion.div
+                className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white/10 border border-white/20 shadow-lg"
                 animate={{ rotate: [0, 360] }}
-                transition={{
-                  duration: 20,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               >
                 <Crown size={39.2} className="text-amber-400" />
               </motion.div>

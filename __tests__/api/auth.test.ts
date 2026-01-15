@@ -1,6 +1,8 @@
 import { describe, it, expect } from '@jest/globals';
 
-describe('Auth API', () => {
+const describeIntegration = process.env.RUN_INTEGRATION_TESTS === 'true' ? describe : describe.skip;
+
+describeIntegration('Auth API', () => {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   describe('POST /api/auth/login', () => {
