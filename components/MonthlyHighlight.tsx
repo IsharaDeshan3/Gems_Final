@@ -133,7 +133,7 @@ export default function MonthlyHighlight({
             </p>
             <p className="font-mono text-lg md:text-xl lg:text-2xl text-slate-300 leading-relaxed">
               Available for a limited time, this exclusive design embodies the artistry and
-              authenticity of the Royal Gems Institute.
+              authenticity of the Royal Gem & Jewellery Hub.
             </p>
           </motion.div>
 

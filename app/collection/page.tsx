@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState, useEffect } from "react";
 import React from "react";
+import Footer from "@/components/FooterPage";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -249,6 +250,7 @@ function Page() {
           <div className="pb-[400px]"></div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 }

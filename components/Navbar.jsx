@@ -28,12 +28,12 @@ function Navbar() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-        className={`static top-0 left-0 w-full z-50 transition-all duration-500 bg-gradient-to-r from-slate-900 via-purple-900 to-indigo-900`}
+        className={`static top-0 left-0 w-full z-50 transition-all duration-500 bg-gradient-to-l from-slate-900 via-purple-900 to-indigo-900`}
       >
         {/* Animated background effects */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
-            className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-r from-amber-400/20 to-orange-500/20 rounded-full blur-2xl"
+            className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-l from-amber-400/20 to-orange-500/20 rounded-full blur-2xl"
             animate={{
               x: [0, 100, 0],
               y: [0, -20, 0],
@@ -51,7 +51,7 @@ function Navbar() {
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
-            className="absolute bottom-0 left-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent"
+            className="absolute bottom-0 left-0 h-[1px] bg-gradient-to-l from-transparent via-amber-400/60 to-transparent"
             animate={{ width: ["0%", "100%", "0%"] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -61,28 +61,14 @@ function Navbar() {
         <div className="py-[1.05rem] relative z-10">
           <div className="max-w-[168em] mx-auto px-6 sm:px-12 md:px-24 lg:px-40 flex items-center justify-between">
             {/* Compact Logo - Left Side */}
-            <motion.div
-              className="flex items-center gap-4"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <motion.div
-                className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white/10 border border-white/20 shadow-lg"
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
-                <Crown size={39.2} className="text-amber-400" />
-              </motion.div>
-              <div className="flex flex-col">
-                <span className="text-[1.96rem] font-bold bg-gradient-to-r from-white via-amber-200 to-orange-300 bg-clip-text text-transparent leading-tight">
-                  Royal Gems
-                </span>
-                <span className="text-lg font-medium text-amber-400 leading-tight">
-                  Institute
-                </span>
-              </div>
-            </motion.div>
+            <div className="flex items-center">
+              <img
+                src="/royalgemslogo.png"
+                alt="Royal Gem & Jewellery Hub Logo"
+                className="h-16 w-auto object-contain scale-[4.2]"
+                style={{ pointerEvents: 'none', filter: 'brightness(1.65)' }}
+              />
+            </div>
 
             {/* Compact Navigation - Right Side */}
             <div className="flex items-center gap-8">

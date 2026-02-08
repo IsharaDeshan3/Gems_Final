@@ -257,7 +257,7 @@ export default function AdminLoginPage() {
             <Crown className="h-10 w-10 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">
-            Royal Gems Institute
+            Royal Gem & Jewellery Hub
           </h1>
           <p className="text-blue-200 text-lg">Admin Portal</p>
           <div className="flex items-center justify-center mt-4 space-x-2">
@@ -458,7 +458,7 @@ export default function AdminLoginPage() {
           className="text-center mt-8 text-blue-200/60 text-xs"
           style={{ animation: "fadeIn 1s ease-out 0.5s both" }}
         >
-          <p>© 2024 Royal Gems Institute. All rights reserved.</p>
+          <p>© 2024 Royal Gem & Jewellery Hub. All rights reserved.</p>
           <p className="mt-1">Secure Admin Access Portal</p>
         </div>
       </div>

@@ -233,7 +233,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     </div>
                     <div>
                       <h1 className="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-                        Royal Gems Institute
+                        Royal Gem & Jewellery Hub
                       </h1>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         Admin Portal
@@ -382,7 +382,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             {/* Footer */}
             <div className="p-6 border-t border-slate-200/50 dark:border-slate-600/50">
               <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
-                <p>© 2024 Royal Gems Institute</p>
+                <p>© 2024 Royal Gem & Jewellery Hub</p>
                 <p className="mt-1">Admin Portal v2.0</p>
               </div>
             </div>

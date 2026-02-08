@@ -1,4 +1,4 @@
-# Royal Gems Institute - Cleanup Report
+# Royal Gem & Jewellery Hub - Cleanup Report
 **Date:** October 27, 2025  
 **Action:** MongoDB to Supabase Migration Cleanup
 

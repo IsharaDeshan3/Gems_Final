@@ -249,7 +249,7 @@ function PaymentSuccessContent() {
                 <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto mb-6 rounded-full" />
 
                 <p className="text-xl md:text-2xl text-slate-200 max-w-2xl mx-auto">
-                  Thank you for your precious purchase from Royal Gems Institute
+                  Thank you for your precious purchase from Royal Gem & Jewellery Hub
                 </p>
               </motion.div>
             </div>
@@ -376,7 +376,7 @@ function PaymentSuccessContent() {
               </a>
             </p>
             <p className="text-xs mt-2 text-slate-400">
-              © 2024 Royal Gems Institute. All rights reserved.
+              © 2024 Royal Gem & Jewellery Hub. All rights reserved.
             </p>
           </motion.div>
         </div>

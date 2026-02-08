@@ -206,16 +206,16 @@ const Footer = () => {
                 <ul className="space-y-[0.84rem]">
                   {footerLinks.collections.map((link) => (
                     <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="text-slate-300 hover:text-amber-300 transition-colors text-sm flex items-center gap-2 group"
+                      <span
+                        className="text-slate-300 cursor-default text-sm flex items-center gap-2 group select-none"
+                        style={{ fontSize: '1.3em' }}
                       >
                         <Sparkles
                           size={10}
                           className="opacity-0 group-hover:opacity-100 transition-opacity text-amber-400"
                         />
                         {link.name}
-                      </a>
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -230,16 +230,16 @@ const Footer = () => {
                 <ul className="space-y-[0.84rem]">
                   {footerLinks.services.slice(0, 3).map((link) => (
                     <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="text-slate-300 hover:text-amber-300 transition-colors text-sm flex items-center gap-2 group"
+                      <span
+                        className="text-slate-300 cursor-default text-sm flex items-center gap-2 group select-none"
+                        style={{ fontSize: '1.3em' }}
                       >
                         <Sparkles
                           size={10}
                           className="opacity-0 group-hover:opacity-100 transition-opacity text-amber-400"
                         />
                         {link.name}
-                      </a>
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -254,16 +254,16 @@ const Footer = () => {
                 <ul className="space-y-[0.84rem]">
                   {footerLinks.academy.slice(0, 3).map((link) => (
                     <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="text-slate-300 hover:text-amber-300 transition-colors text-sm flex items-center gap-2 group"
+                      <span
+                        className="text-slate-300 cursor-default text-sm flex items-center gap-2 group select-none"
+                        style={{ fontSize: '1.3em' }}
                       >
                         <Sparkles
                           size={10}
                           className="opacity-0 group-hover:opacity-100 transition-opacity text-amber-400"
                         />
                         {link.name}
-                      </a>
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -278,16 +278,16 @@ const Footer = () => {
                 <ul className="space-y-[0.84rem]">
                   {footerLinks.company.slice(0, 3).map((link) => (
                     <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="text-slate-300 hover:text-amber-300 transition-colors text-sm flex items-center gap-2 group"
+                      <span
+                        className="text-slate-300 cursor-default text-sm flex items-center gap-2 group select-none"
+                        style={{ fontSize: '1.3em' }}
                       >
                         <Sparkles
                           size={10}
                           className="opacity-0 group-hover:opacity-100 transition-opacity text-amber-400"
                         />
                         {link.name}
-                      </a>
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -305,51 +305,34 @@ const Footer = () => {
                 <Award size={14} className="text-amber-400" />
                 Contact
               </h4>
-              <div className="space-y-1">
+              <div className="space-y-3">
                 <div className="flex items-start gap-2">
                   <MapPin
-                    size={14}
+                    size={18}
                     className="text-amber-400 mt-1 flex-shrink-0"
                   />
-                  <p className="text-[0.84rem] text-slate-300">
-                    123 Galle Road, Colombo 03
-                  </p>
+                  <span className="text-[1.09rem] text-slate-300" style={{ fontSize: '1.3em' }}>
+                    Bathgamgoda, Pelmadulla
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone
-                    size={14}
+                    size={18}
                     className="text-amber-400 flex-shrink-0"
                   />
-                  <p className="text-slate-300 text-xs">
-                    +94 11 234 5678
-                  </p>
+                  <span className="text-slate-300" style={{ fontSize: '1.3em' }}>
+                    071 81 79 587
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail
-                    size={14}
+                  <Phone
+                    size={18}
                     className="text-amber-400 flex-shrink-0"
                   />
-                  <p className="text-slate-300 text-xs">
-                    info@royalgems.lk
-                  </p>
+                  <span className="text-slate-300" style={{ fontSize: '1.3em' }}>
+                    070 28 57 868 (WhatsApp)
+                  </span>
                 </div>
-              </div>
-
-              {/* Social Links */}
-              <div className="flex items-center gap-2 mt-3">
-                {socialLinks.map((social, i) => (
-                  <motion.a
-                    key={i}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-8 h-8 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-400 ${social.color} transition-all border border-white/20`}
-                    whileHover={{ scale: 1.15, y: -2 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <social.icon size={12} />
-                  </motion.a>
-                ))}
               </div>
             </motion.div>
           </div>

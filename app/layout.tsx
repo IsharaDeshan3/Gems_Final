@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Royal Gems Institute",
+  title: "Royal Gem & Jewellery Hub",
   description:
     "Sri Lanka's Premier Gemstone and Jewelry institute",
   icons: {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {
-    title: "Royal Gems Institute",
+    title: "Royal Gem & Jewellery Hub",
     description: "Sri Lanka's premier gemstone institute",
     type: "website",
   },

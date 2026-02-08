@@ -17,7 +17,7 @@ const AcademyPage = () => {
           <h2 className="text-3xl font-bold text-white mb-4">Course Overview</h2>
           <p><strong>Course Title:</strong> Geuda Heat Treatment Course</p>
           <p><strong>Target Audience:</strong> Designed for both beginners and professionals.</p>
-          <p><strong>Institution:</strong> Royal Gems Institute</p>
+          <p><strong>Institution:</strong> Royal Gem & Jewellery Hub</p>
 
           <h3 className="text-3xl font-semibold text-white mt-6 mb-2">What You Will Learn</h3>
           <ul className="text-2xl list-disc list-inside">

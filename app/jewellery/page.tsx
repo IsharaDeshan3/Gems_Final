@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Footer from "@/components/FooterPage";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 
@@ -59,6 +60,7 @@ export default function JewelleryPage() {
           <div className="pb-[220px]" />
         </section>
       </div>
+      <Footer />
     </div>
   );
 }
