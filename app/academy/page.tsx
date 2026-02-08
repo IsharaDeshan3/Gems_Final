@@ -30,7 +30,6 @@ const AcademyPage = () => {
 
           <h3 className="text-3xl font-semibold text-white mt-6 mb-2">Logistics & Enrollment</h3>
           <p><strong>Location:</strong> Bathgamgoda, Pelmadulla</p>
-          <p><strong>Start Date:</strong> January 17, 2026 (Saturday)</p>
           <p><strong>Course Fee:</strong> Rs. 75,000/=</p>
           <p><strong>Availability:</strong> Limited seats available.</p>
 
