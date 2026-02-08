@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser, isAdminRole } from "@/lib/auth/middleware-helper";
 
-// Cache for 30 seconds to reduce database load
-export const revalidate = 30;
+// This route reads cookies/session and must be dynamic.
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const { user, supabase, error } = await getAuthenticatedUser(request);

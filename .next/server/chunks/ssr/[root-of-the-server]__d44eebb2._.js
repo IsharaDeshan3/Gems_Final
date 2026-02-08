@@ -1,3 +1,0 @@
-module.exports=[93695,(a,b,c)=>{b.exports=a.x("next/dist/shared/lib/no-fallback-error.external.js",()=>require("next/dist/shared/lib/no-fallback-error.external.js"))},62212,a=>{a.n(a.i(66114))},12103,(a,b,c)=>{},17986,a=>{"use strict";a.s(["default",()=>c]);var b=a.i(7997);function c(){return(0,b.jsx)("div",{className:"min-h-[60vh] flex items-center justify-center",children:(0,b.jsxs)("div",{className:"text-center",children:[(0,b.jsx)("h1",{className:"text-4xl font-bold mb-2",children:"403"}),(0,b.jsx)("p",{className:"text-muted-foreground",children:"You don’t have permission to access this page."})]})})}}];
-
-//# sourceMappingURL=%5Broot-of-the-server%5D__d44eebb2._.js.map

@@ -1,0 +1,21 @@
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+self["webpackHotUpdate_N_E"]("app/academy/page",{
+
+/***/ "(app-pages-browser)/./components/Gallery3D.module.css":
+/*!*****************************************!*\
+  !*** ./components/Gallery3D.module.css ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval(__webpack_require__.ts("// extracted by mini-css-extract-plugin\nmodule.exports = {\"stage\":\"Gallery3D_stage__umlbj\",\"carouselMode\":\"Gallery3D_carouselMode__GEQN3\",\"dragging\":\"Gallery3D_dragging__OpF71\",\"loader\":\"Gallery3D_loader__1s10b\",\"loaderHide\":\"Gallery3D_loaderHide__u6yEG\",\"loaderContent\":\"Gallery3D_loaderContent__3ocba\",\"loaderRing\":\"Gallery3D_loaderRing__bkTWY\",\"spin\":\"Gallery3D_spin__LqIX_\",\"bg\":\"Gallery3D_bg__adEdS\",\"cards\":\"Gallery3D_cards__7wBOO\",\"card\":\"Gallery3D_card__0_9Pf\",\"cardImg\":\"Gallery3D_cardImg__BXguP\",\"arrowLeft\":\"Gallery3D_arrowLeft__N5GRi\",\"arrowRight\":\"Gallery3D_arrowRight__w3nqj\"};\n    if(true) {\n      // 1770522772611\n      var cssReload = __webpack_require__(/*! ./node_modules/next/dist/compiled/mini-css-extract-plugin/hmr/hotModuleReplacement.js */ \"(app-pages-browser)/./node_modules/next/dist/compiled/mini-css-extract-plugin/hmr/hotModuleReplacement.js\")(module.id, {\"publicPath\":\"/_next/\",\"esModule\":false,\"locals\":true});\n      module.hot.dispose(cssReload);\n      \n    }\n  \nmodule.exports.__checksum = \"9609f8a4891c\"\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKGFwcC1wYWdlcy1icm93c2VyKS8uL2NvbXBvbmVudHMvR2FsbGVyeTNELm1vZHVsZS5jc3MiLCJtYXBwaW5ncyI6IkFBQUE7QUFDQSxrQkFBa0I7QUFDbEIsT0FBTyxJQUFVO0FBQ2pCO0FBQ0Esc0JBQXNCLG1CQUFPLENBQUMsd01BQXlJLGNBQWMsc0RBQXNEO0FBQzNPLE1BQU0sVUFBVTtBQUNoQjtBQUNBO0FBQ0E7QUFDQSx5QkFBeUIiLCJzb3VyY2VzIjpbIkM6XFxVc2Vyc1xcaWRzZGtcXE9uZURyaXZlXFxEZXNrdG9wXFxHZW1fUHVibGlzaGVkXFxnZW1fMlxcY29tcG9uZW50c1xcR2FsbGVyeTNELm1vZHVsZS5jc3MiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gZXh0cmFjdGVkIGJ5IG1pbmktY3NzLWV4dHJhY3QtcGx1Z2luXG5tb2R1bGUuZXhwb3J0cyA9IHtcInN0YWdlXCI6XCJHYWxsZXJ5M0Rfc3RhZ2VfX3VtbGJqXCIsXCJjYXJvdXNlbE1vZGVcIjpcIkdhbGxlcnkzRF9jYXJvdXNlbE1vZGVfX0dFUU4zXCIsXCJkcmFnZ2luZ1wiOlwiR2FsbGVyeTNEX2RyYWdnaW5nX19PcEY3MVwiLFwibG9hZGVyXCI6XCJHYWxsZXJ5M0RfbG9hZGVyX18xczEwYlwiLFwibG9hZGVySGlkZVwiOlwiR2FsbGVyeTNEX2xvYWRlckhpZGVfX3U2eUVHXCIsXCJsb2FkZXJDb250ZW50XCI6XCJHYWxsZXJ5M0RfbG9hZGVyQ29udGVudF9fM29jYmFcIixcImxvYWRlclJpbmdcIjpcIkdhbGxlcnkzRF9sb2FkZXJSaW5nX19ia1RXWVwiLFwic3BpblwiOlwiR2FsbGVyeTNEX3NwaW5fX0xxSVhfXCIsXCJiZ1wiOlwiR2FsbGVyeTNEX2JnX19hZEVkU1wiLFwiY2FyZHNcIjpcIkdhbGxlcnkzRF9jYXJkc19fN3dCT09cIixcImNhcmRcIjpcIkdhbGxlcnkzRF9jYXJkX18wXzlQZlwiLFwiY2FyZEltZ1wiOlwiR2FsbGVyeTNEX2NhcmRJbWdfX0JYZ3VQXCIsXCJhcnJvd0xlZnRcIjpcIkdhbGxlcnkzRF9hcnJvd0xlZnRfX041R1JpXCIsXCJhcnJvd1JpZ2h0XCI6XCJHYWxsZXJ5M0RfYXJyb3dSaWdodF9fdzNucWpcIn07XG4gICAgaWYobW9kdWxlLmhvdCkge1xuICAgICAgLy8gMTc3MDUyMjc3MjYxMVxuICAgICAgdmFyIGNzc1JlbG9hZCA9IHJlcXVpcmUoXCJDOi9Vc2Vycy9pZHNkay9PbmVEcml2ZS9EZXNrdG9wL0dlbV9QdWJsaXNoZWQvZ2VtXzIvbm9kZV9tb2R1bGVzL25leHQvZGlzdC9jb21waWxlZC9taW5pLWNzcy1leHRyYWN0LXBsdWdpbi9obXIvaG90TW9kdWxlUmVwbGFjZW1lbnQuanNcIikobW9kdWxlLmlkLCB7XCJwdWJsaWNQYXRoXCI6XCIvX25leHQvXCIsXCJlc01vZHVsZVwiOmZhbHNlLFwibG9jYWxzXCI6dHJ1ZX0pO1xuICAgICAgbW9kdWxlLmhvdC5kaXNwb3NlKGNzc1JlbG9hZCk7XG4gICAgICBcbiAgICB9XG4gIFxubW9kdWxlLmV4cG9ydHMuX19jaGVja3N1bSA9IFwiOTYwOWY4YTQ4OTFjXCJcbiJdLCJuYW1lcyI6W10sImlnbm9yZUxpc3QiOltdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(app-pages-browser)/./components/Gallery3D.module.css\n"));
+
+/***/ })
+
+});
