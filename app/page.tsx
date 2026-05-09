@@ -228,7 +228,7 @@ function Page() {
                     </motion.div>
 
                     <h2 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-white via-amber-200 to-orange-300 bg-clip-text text-transparent mb-4">
-                      Royal Gem & Jewellery Hub
+                      Prabha Gem & Jewellery Hub
                     </h2>
 
                     <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto mb-6 rounded-full" />

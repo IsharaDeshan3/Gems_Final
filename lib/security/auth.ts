@@ -55,8 +55,8 @@ export const generatePasswordResetToken = (): string => {
 // 2FA utilities
 export const generate2FASecret = (email: string) => {
   const secret = speakeasy.generateSecret({
-    name: `Royal Gem & Jewellery Hub (${email})`,
-    issuer: "Royal Gem & Jewellery Hub",
+    name: `Prabha Gem & Jewellery Hub (${email})`,
+    issuer: "Prabha Gem & Jewellery Hub",
     length: 32,
   });
 

@@ -248,7 +248,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
     }
 
-    updates.role = normalizedRole;
+    updates.role = normalizedRole as "Admin" | "Moderator" | "User";
   }
 
   if (resetPassword) {

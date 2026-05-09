@@ -198,7 +198,7 @@ const AboutPage = () => {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="text-8rem md:text-12rem font-bold mb-6 bg-gradient-to-r from-white via-amber-200 to-amber-400 bg-clip-text text-transparent"
           >
-            Royal Gem & Jewellery Hub
+            Prabha Gem & Jewellery Hub
           </motion.h1>
 
           <motion.p

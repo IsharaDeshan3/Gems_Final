@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Raleway } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import ClientLayout from "./ClientLayout";
@@ -16,8 +16,15 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const raleway = Raleway({
+  variable: "--font-raleway",
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Royal Gem & Jewellery Hub",
+  title: "Prabha Gem & Jewellery Hub",
   description:
     "Sri Lanka's Premier Gemstone and Jewelry institute",
   icons: {
@@ -25,7 +32,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {
-    title: "Royal Gem & Jewellery Hub",
+    title: "Prabha Gem & Jewellery Hub",
     description: "Sri Lanka's premier gemstone institute",
     type: "website",
   },
@@ -39,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${raleway.variable} antialiased h-full overflow-hidden`}
       >
         <ClientLayout>
           <div className="h-full flex flex-col">

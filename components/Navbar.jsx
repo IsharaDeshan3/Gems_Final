@@ -27,7 +27,6 @@ function Navbar() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
         className={`static top-0 left-0 w-full z-50 transition-all duration-500 bg-gradient-to-l from-slate-900 via-purple-900 to-indigo-900`}
       >
         {/* Animated background effects */}
@@ -58,14 +57,14 @@ function Navbar() {
         </div>
 
         {/* Always show compact navbar */}
-        <div className="py-[1.05rem] relative z-10">
+        <div className="py-[1.50rem] relative z-10">
           <div className="max-w-[168em] mx-auto px-6 sm:px-12 md:px-24 lg:px-40 flex items-center justify-between">
             {/* Compact Logo - Left Side */}
             <div className="flex items-center">
               <img
-                src="/royalgemslogo.png"
-                alt="Royal Gem & Jewellery Hub Logo"
-                className="h-16 w-auto object-contain scale-[4.2]"
+                src="/images/logo.jpeg"
+                alt="Prabha Gem & Jewellery Hub Logo"
+                className="h-12 w-auto object-contain scale-[2.1]"
                 style={{ pointerEvents: 'none', filter: 'brightness(1.65)' }}
               />
             </div>
