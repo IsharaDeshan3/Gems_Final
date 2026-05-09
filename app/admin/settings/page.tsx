@@ -12,6 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { normalizeRole } from "@/lib/auth/roles";
 
 type User = {
   _id?: string;
@@ -63,32 +64,32 @@ export default function SettingsPage() {
       {
         name: "user_management",
         description: "Create, update, delete users",
-        roles: ["SuperAdmin", "Admin"],
+        roles: ["Admin"],
       },
       {
         name: "product_management",
         description: "Manage gem listings and approvals",
-        roles: ["SuperAdmin", "Admin", "Moderator"],
+        roles: ["Admin", "Moderator"],
       },
       {
         name: "order_management",
         description: "View and manage orders",
-        roles: ["SuperAdmin", "Admin"],
+        roles: ["Admin"],
       },
       {
         name: "audit_logs",
         description: "View audit logs",
-        roles: ["SuperAdmin", "Admin"],
+        roles: ["Admin"],
       },
       {
         name: "system_settings",
         description: "Configure system settings",
-        roles: ["SuperAdmin"],
+        roles: ["Admin"],
       },
       {
         name: "financial_reports",
         description: "Access financial reports",
-        roles: ["SuperAdmin", "Admin"],
+        roles: ["Admin"],
       },
     ]);
     console.log(loading, userRole);
@@ -189,14 +190,14 @@ export default function SettingsPage() {
                       <td>
                         <Badge
                           variant={
-                            user.role === "SuperAdmin"
+                            normalizeRole(user.role) === "Admin"
                               ? "default"
-                              : user.role === "Admin"
+                              : normalizeRole(user.role) === "Admin"
                               ? "secondary"
                               : "outline"
                           }
                         >
-                          {user.role}
+                          {normalizeRole(user.role)}
                         </Badge>
                       </td>
                       <td>{user.isActive ? "Active" : "Suspended"}</td>
@@ -213,7 +214,7 @@ export default function SettingsPage() {
                       </td>
                       <td>
                         <Select
-                          defaultValue={user.role}
+                          defaultValue={normalizeRole(user.role)}
                           onValueChange={(v) => updateUserRole(user._id || user.id || '', v)}
                           disabled={user.email === "admin@royalgems.com"}
                         >
@@ -223,9 +224,6 @@ export default function SettingsPage() {
                           <SelectContent>
                             <SelectItem value="Moderator">Moderator</SelectItem>
                             <SelectItem value="Admin">Admin</SelectItem>
-                            <SelectItem value="SuperAdmin">
-                              SuperAdmin
-                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </td>
@@ -256,7 +254,6 @@ export default function SettingsPage() {
                     <th>Description</th>
                     <th>Moderator</th>
                     <th>Admin</th>
-                    <th>SuperAdmin</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -270,7 +267,6 @@ export default function SettingsPage() {
                       </td>
                       <td>{perm.roles.includes("Moderator") ? "✓" : "✗"}</td>
                       <td>{perm.roles.includes("Admin") ? "✓" : "✗"}</td>
-                      <td>{perm.roles.includes("SuperAdmin") ? "✓" : "✗"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -312,7 +308,7 @@ export default function SettingsPage() {
               <div>
                 <Label>2FA Required</Label>
                 <div className="text-sm text-muted-foreground">
-                  • Mandatory for Admin and SuperAdmin roles
+                  • Mandatory for Admin role
                   <br />• Optional for Moderator role
                 </div>
               </div>

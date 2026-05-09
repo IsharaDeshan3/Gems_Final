@@ -1,7 +1,11 @@
 {
-  "/academy/page": "app/academy/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/profile/route": "app/api/auth/profile/route.js",
+  "/api/admin/stats/route": "app/api/admin/stats/route.js",
+  "/api/admin/logs/route": "app/api/admin/logs/route.js",
+  "/api/admin/users/route": "app/api/admin/users/route.js",
   "/page": "app/page.js",
-  "/gems/page": "app/gems/page.js",
-  "/about/page": "app/about/page.js",
-  "/jewellery/page": "app/jewellery/page.js"
+  "/admin/page": "app/admin/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
+  "/admin/users/page": "app/admin/users/page.js"
 }

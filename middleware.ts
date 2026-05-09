@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { getRepositoryFactory } from '@/lib/repositories';
-
-const ADMIN_ROLES = new Set(['superadmin', 'admin', 'moderator', 'SuperAdmin', 'Admin', 'Moderator']);
+import { getAuthenticatedUser } from '@/lib/auth/middleware-helper';
+import { isAdmin } from '@/lib/auth/roles';
 
 // Paths exempt from admin auth checks
 const PUBLIC_ADMIN_PATHS = new Set(['/admin/login']);
@@ -21,58 +19,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
-
-  // Create Supabase client with cookie handling for middleware
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-        },
-      },
-    }
-  );
 
   const csrfHeader = request.headers.get('x-csrf-token');
   const csrfCookie = request.cookies.get('csrfToken')?.value;
@@ -82,20 +33,10 @@ export async function middleware(request: NextRequest) {
   // Can be overridden via SESSION_TIMEOUT environment variable
   const sessionTimeoutMs = parseInt(process.env.SESSION_TIMEOUT || '60000');
 
-  // Get Supabase session from cookies first
-  let session = null;
-  let sessionError = null;
-  
-  try {
-    const sessionResult = await supabase.auth.getSession();
-    session = sessionResult.data.session;
-    sessionError = sessionResult.error;
-  } catch (error) {
-    sessionError = error;
-  }
+  const { user: userProfile, error: authError } = await getAuthenticatedUser(request);
 
-  // If no session, redirect to login
-  if (sessionError || !session) {
+  // If no verified user, redirect to login
+  if (authError || !userProfile) {
     const loginUrl = new URL('/admin/login', request.url);
     loginUrl.searchParams.set('reason', 'unauthenticated');
     return NextResponse.redirect(loginUrl);
@@ -127,19 +68,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Get user profile from our database
-  const userRepository = getRepositoryFactory(supabase).getUserRepository();
-  const userProfile = await userRepository.findById(session.user.id);
-
-  if (!userProfile) {
-    const loginUrl = new URL('/admin/login', request.url);
-    loginUrl.searchParams.set('reason', 'user_not_found');
-    return NextResponse.redirect(loginUrl);
-  }
-
   // Check if user has admin role (case-insensitive)
   const role = userProfile.role;
-  if (!ADMIN_ROLES.has(role)) {
+  if (!isAdmin(role)) {
     const forbiddenUrl = new URL('/403', request.url);
     return NextResponse.redirect(forbiddenUrl);
   }

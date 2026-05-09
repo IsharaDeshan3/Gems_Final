@@ -5,10 +5,9 @@ import { Database } from '@/types/supabase'
 export interface User {
   id: string
   email: string
-  password: string
+  role: 'Admin' | 'Moderator' | 'User'
   first_name: string
   last_name: string
-  role: 'SuperAdmin' | 'Admin' | 'Moderator' | 'User'
   is_active: boolean
   two_factor_secret?: string
   two_factor_enabled: boolean

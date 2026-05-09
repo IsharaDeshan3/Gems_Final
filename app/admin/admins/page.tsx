@@ -33,6 +33,7 @@ import {
   Lock,
   Calendar,
 } from "lucide-react";
+import { normalizeRole } from "@/lib/auth/roles";
 
 type AdminUser = {
   _id: string;
@@ -62,7 +63,6 @@ export default function AdminsPage() {
     setMounted(true);
     loadAdmins();
   }, []);
-
   async function loadAdmins() {
     setLoading(true);
     try {
@@ -167,22 +167,18 @@ export default function AdminsPage() {
   }
 
   function getRoleIcon(role: string) {
-    switch (role) {
+    switch (normalizeRole(role)) {
       case "Admin":
         return <ShieldCheck className="h-4 w-4" />;
-      case "SuperAdmin":
-        return <Crown className="h-4 w-4" />;
       default:
         return <Shield className="h-4 w-4" />;
     }
   }
 
   function getRoleBadgeColor(role: string) {
-    switch (role) {
+    switch (normalizeRole(role)) {
       case "Admin":
         return "from-blue-500 to-indigo-500";
-      case "SuperAdmin":
-        return "from-amber-500 to-orange-500";
       default:
         return "from-emerald-500 to-teal-500";
     }
@@ -219,7 +215,7 @@ export default function AdminsPage() {
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center">
                 <Crown className="h-3 w-3 mr-1" />
-                SuperAdmin creation is restricted to scripts only
+                Admin creation is handled through this panel
               </p>
             </div>
           </div>

@@ -18,7 +18,6 @@ import {
   Search,
   Shield,
   ShieldCheck,
-  Crown,
   Eye,
   EyeOff,
   Trash2,
@@ -32,6 +31,7 @@ import {
   Settings,
   RefreshCw,
 } from "lucide-react";
+import { normalizeRole } from "@/lib/auth/roles";
 
 type User = {
   id: string;
@@ -52,6 +52,7 @@ type User = {
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
@@ -68,6 +69,23 @@ export default function UsersPage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const loadCurrentUser = async () => {
+      try {
+        const res = await fetch("/api/auth/profile", { credentials: "include" });
+        if (!res.ok) return;
+        const data = await res.json();
+        setCurrentUserId(data.user?.id || null);
+      } catch {
+        setCurrentUserId(null);
+      }
+    };
+
+    loadCurrentUser();
+  }, [mounted]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -123,17 +141,6 @@ export default function UsersPage() {
     try {
       // Mock user creation
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const newUser: User = {
-        id: Date.now().toString(),
-        email: form.email,
-        firstName: form.firstName,
-        lastName: form.lastName,
-        role: form.role,
-        isActive: true,
-        createdAt: new Date().toISOString().split("T")[0],
-        lastLogin: "Never",
-      };
 
       //adding the api call
       e.preventDefault();
@@ -218,6 +225,13 @@ export default function UsersPage() {
   async function remove(u: User) {
     const firstName = u.firstName || u.first_name || 'Unknown';
     const lastName = u.lastName || u.last_name || 'User';
+    const targetId = u._id || u.id;
+
+    if (currentUserId && targetId === currentUserId) {
+      setError('You cannot delete your own account.');
+      return;
+    }
+
     if (
       !confirm(`Are you sure you want to delete ${firstName} ${lastName}?`)
     )
@@ -231,7 +245,7 @@ export default function UsersPage() {
           .find((r) => r.startsWith("csrfToken="))
           ?.split("=")[1] || "";
       const res = await fetch(
-        `/api/admin/users?id=${encodeURIComponent(u._id || u.id)}`,
+        `/api/admin/users?id=${encodeURIComponent(targetId)}`,
         {
           method: "DELETE",
           headers: { "x-csrf-token": csrf },
@@ -249,9 +263,7 @@ export default function UsersPage() {
   }
 
   function getRoleIcon(role: string) {
-    switch (role) {
-      case "SuperAdmin":
-        return <Crown className="h-4 w-4" />;
+    switch (normalizeRole(role)) {
       case "Admin":
         return <ShieldCheck className="h-4 w-4" />;
       default:
@@ -260,9 +272,7 @@ export default function UsersPage() {
   }
 
   function getRoleBadgeColor(role: string) {
-    switch (role) {
-      case "SuperAdmin":
-        return "from-amber-500 to-orange-500";
+    switch (normalizeRole(role)) {
       case "Admin":
         return "from-blue-500 to-indigo-500";
       default:
@@ -420,7 +430,6 @@ export default function UsersPage() {
                   <SelectContent>
                     <SelectItem value="Moderator">Moderator</SelectItem>
                     <SelectItem value="Admin">Admin</SelectItem>
-                    <SelectItem value="SuperAdmin">SuperAdmin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -592,7 +601,6 @@ export default function UsersPage() {
                     <SelectContent>
                       <SelectItem value="Moderator">Moderator</SelectItem>
                       <SelectItem value="Admin">Admin</SelectItem>
-                      <SelectItem value="SuperAdmin">SuperAdmin</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

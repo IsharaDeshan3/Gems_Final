@@ -20,7 +20,7 @@ export async function createPolicies(supabase: SupabaseClient) {
           exists (
             select 1 from users
             where users.id = auth.uid()
-            and users.role in ('SuperAdmin', 'Admin')
+            and lower(users.role) in ('admin')
           )
         `
       }
@@ -38,7 +38,7 @@ export async function createPolicies(supabase: SupabaseClient) {
           exists (
             select 1 from users
             where users.id = auth.uid()
-            and users.role in ('SuperAdmin', 'Admin', 'Moderator')
+            and lower(users.role) in ('admin', 'moderator')
           )
         `
       },
@@ -49,7 +49,7 @@ export async function createPolicies(supabase: SupabaseClient) {
           exists (
             select 1 from users
             where users.id = auth.uid()
-            and users.role in ('SuperAdmin', 'Admin', 'Moderator')
+            and lower(users.role) in ('admin', 'moderator')
           )
         `
       }
@@ -72,7 +72,7 @@ export async function createPolicies(supabase: SupabaseClient) {
           exists (
             select 1 from users
             where users.id = auth.uid()
-            and users.role in ('SuperAdmin', 'Admin', 'Moderator')
+            and lower(users.role) in ('admin', 'moderator')
           )
         `
       }
@@ -96,7 +96,7 @@ export async function createPolicies(supabase: SupabaseClient) {
           exists (
             select 1 from users
             where users.id = auth.uid()
-            and users.role in ('SuperAdmin', 'Admin', 'Moderator')
+            and lower(users.role) in ('admin', 'moderator')
           )
         `
       }
@@ -109,7 +109,7 @@ export async function createPolicies(supabase: SupabaseClient) {
           exists (
             select 1 from users
             where users.id = auth.uid()
-            and users.role in ('SuperAdmin', 'Admin')
+            and lower(users.role) in ('admin')
           )
         `
       },

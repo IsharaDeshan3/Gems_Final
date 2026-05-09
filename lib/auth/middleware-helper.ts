@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { getRepositoryFactory } from '@/lib/repositories';
+import { canManageContent, isAdmin as isAdminRoleFromRoles } from '@/lib/auth/roles';
 
 export async function getAuthenticatedUser(request: NextRequest) {
   const supabase = createServerClient(
@@ -46,11 +47,11 @@ export async function getAdminClient(request: NextRequest) {
 }
 
 export function isAdminRole(role: string): boolean {
-  return ['SuperAdmin', 'Admin', 'Moderator', 'superadmin', 'admin', 'moderator'].includes(role);
+  return isAdminRoleFromRoles(role);
 }
 
 export function isHighAdminRole(role: string): boolean {
-  return ['SuperAdmin', 'Admin', 'superadmin', 'admin'].includes(role);
+  return canManageContent(role);
 }
 
 export function isMutatingMethod(method: string): boolean {

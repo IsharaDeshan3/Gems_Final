@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useState, useCallback, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname } from "next/navigation";
+import { isHighAdminRole } from "@/lib/auth/middleware-helper";
 import {
   LayoutDashboard,
   Users,
@@ -40,7 +41,7 @@ const navigationItems = [
     name: "Settings",
     href: "/admin/settings",
     icon: Settings,
-    superAdminOnly: true,
+    adminOnly: true,
   },
 ];
 
@@ -330,7 +331,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                   Navigation
                 </p>
                 {navigationItems.map((item, index) => {
-                  if (item.superAdminOnly && user?.role !== "SuperAdmin") {
+                  if (item.adminOnly && !isHighAdminRole(user?.role || "")) {
                     return null;
                   }
 

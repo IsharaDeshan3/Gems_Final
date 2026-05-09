@@ -1,28 +1,4 @@
 {
-  "app\\collection\\page.tsx -> @/components/Cart": {
-    "id": "app\\collection\\page.tsx -> @/components/Cart",
-    "files": [
-      "static/chunks/_app-pages-browser_components_Cart_tsx.js"
-    ]
-  },
-  "app\\collection\\page.tsx -> @/components/Checkout": {
-    "id": "app\\collection\\page.tsx -> @/components/Checkout",
-    "files": [
-      "static/chunks/_app-pages-browser_components_Checkout_tsx.js"
-    ]
-  },
-  "app\\collection\\page.tsx -> @/components/CollectionPage": {
-    "id": "app\\collection\\page.tsx -> @/components/CollectionPage",
-    "files": [
-      "static/chunks/_app-pages-browser_components_CollectionPage_tsx-_02121.js"
-    ]
-  },
-  "app\\jewellery\\page.tsx -> @/components/CollectionPage": {
-    "id": "app\\jewellery\\page.tsx -> @/components/CollectionPage",
-    "files": [
-      "static/chunks/_app-pages-browser_components_CollectionPage_tsx-_02120.js"
-    ]
-  },
   "app\\page.tsx -> @/components/ITemDisplayCard": {
     "id": "app\\page.tsx -> @/components/ITemDisplayCard",
     "files": [

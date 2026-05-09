@@ -9,7 +9,7 @@ export async function createSchema(supabase: SupabaseClient) {
       password text not null,
       first_name text not null,
       last_name text not null,
-      role text default 'User' check (role in ('SuperAdmin', 'Admin', 'Moderator', 'User')),
+      role text default 'User' check (lower(role) in ('admin', 'moderator', 'user', 'superadmin')),
       is_active boolean default true,
       two_factor_secret text,
       two_factor_enabled boolean default false,

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { getRepositoryFactory } from '@/lib/repositories';
 import { validatePasswordStrength } from '@/lib/security/auth';
-import { enforceCsrf, getAdminClient } from '@/lib/auth/middleware-helper';
+import { enforceCsrf, getAdminClient, isAdminRole } from '@/lib/auth/middleware-helper';
 import { getRateLimitIdentifier, rateLimiters } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
   const userRepository = getRepositoryFactory(supabase).getUserRepository();
   const userProfile = await userRepository.findById(authUser.id);
-  if (!userProfile || !['SuperAdmin', 'superadmin'].includes(userProfile.role)) {
+  if (!userProfile || !isAdminRole(userProfile.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
   const userRepository = getRepositoryFactory(supabase).getUserRepository();
   const userProfile = await userRepository.findById(authUser.id);
-  if (!userProfile || !['SuperAdmin', 'superadmin'].includes(userProfile.role)) {
+  if (!userProfile || !isAdminRole(userProfile.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -105,7 +105,10 @@ export async function POST(request: NextRequest) {
   }
 
   // Only allow Admin and Moderator roles
-  if (!['admin', 'moderator'].includes(role)) {
+  const normalizedRole = String(role || '').toLowerCase();
+
+  // Only allow Admin and Moderator roles
+  if (!['admin', 'moderator'].includes(normalizedRole)) {
     return NextResponse.json({ error: 'Invalid role. Only Admin and Moderator can be created through this interface.' }, { status: 400 });
   }
 
@@ -147,7 +150,7 @@ export async function POST(request: NextRequest) {
       first_name: firstName,
       last_name: lastName,
       phone: '',
-      role: role as 'admin' | 'moderator',
+      role: normalizedRole as 'admin' | 'moderator',
       is_active: true,
       is_verified: true,
       two_factor_enabled: false

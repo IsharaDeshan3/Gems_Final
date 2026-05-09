@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { user, supabase, error } = await getAuthenticatedUser(request);
-    if (error || !user || !isHighAdminRole(user.role)) {
+    if (error || !user || !isAdminRole(user.role)) {
       return NextResponse.json(
         { error: error || "Forbidden - Admin access required" },
         { status: error ? 401 : 403 }

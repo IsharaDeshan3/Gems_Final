@@ -1,0 +1,48 @@
+name: Ping Supabase Database
+
+on:
+  schedule:
+    # Runs every day at 9 AM UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  ping-database:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Ping database
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node -e "
+          const https = require('https');
+          const url = process.env.SUPABASE_URL + '/rest/v1/rpc/ping';
+          const options = {
+            method: 'POST',
+            headers: {
+              'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
+              'Content-Type': 'application/json'
+            }
+          };
+          const req = https.request(url, options, (res) => {
+            console.log('Status:', res.statusCode);
+            res.on('data', () => {});
+            res.on('end', () => {
+              console.log('Database pinged successfully at ' + new Date().toISOString());
+              process.exit(res.statusCode === 200 ? 0 : 1);
+            });
+          });
+          req.on('error', (err) => {
+            console.error('Ping failed:', err.message);
+            process.exit(1);
+          });
+          req.write(JSON.stringify({}));
+          req.end();
+          "

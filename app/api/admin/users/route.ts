@@ -4,7 +4,7 @@ import { getRepositoryFactory } from '@/lib/repositories';
 import { validatePasswordStrength } from '@/lib/security/auth';
 import { rateLimiters, getRateLimitIdentifier } from '@/lib/rate-limit';
 import { validateInput, ValidationRule } from '@/lib/validation';
-import { enforceCsrf, getAdminClient } from '@/lib/auth/middleware-helper';
+import { enforceCsrf, getAdminClient, isAdminRole, isHighAdminRole } from '@/lib/auth/middleware-helper';
 import bcrypt from 'bcryptjs';
 
 export async function GET(request: NextRequest) {
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
   const userRepository = getRepositoryFactory(supabase).getUserRepository();
   const userProfile = await userRepository.findById(authUser.id);
-  if (!userProfile || !['SuperAdmin', 'Admin', 'Moderator', 'superadmin', 'admin', 'moderator'].includes(userProfile.role)) {
+  if (!userProfile || !isAdminRole(userProfile.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
   const userRepository = getRepositoryFactory(supabase).getUserRepository();
   const userProfile = await userRepository.findById(authUser.id);
-  if (!userProfile || !['SuperAdmin', 'Admin', 'superadmin', 'admin'].includes(userProfile.role)) {
+  if (!userProfile || !isAdminRole(userProfile.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -99,6 +99,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json();
   const { email, firstName, lastName, role, password } = body || {};
+  const normalizedRole = String(role || '').toLowerCase();
 
   // Validate input using validation utility
   const validationRules: ValidationRule[] = [
@@ -117,14 +118,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Prevent creating SuperAdmin accounts through this interface
-  if (role === 'superadmin') {
-    return NextResponse.json({ error: 'SuperAdmin accounts can only be created through authorized scripts' }, { status: 403 });
-  }
-
-  // Validate role
-  if (role && !['admin', 'moderator', 'user'].includes(role)) {
-    return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+  // Prevent creating legacy superadmin accounts through this interface
+  // Only allow the two admin-panel roles through this interface
+  if (!['admin', 'moderator'].includes(normalizedRole)) {
+    return NextResponse.json({ error: 'Invalid role. Only Admin and Moderator can be created through this interface.' }, { status: 400 });
   }
 
   const { isValid, errors } = validatePasswordStrength(password);
@@ -162,7 +159,7 @@ export async function POST(request: NextRequest) {
       first_name: firstName,
       last_name: lastName,
       phone: '',
-      role: (role as 'superadmin' | 'admin' | 'moderator' | 'user') || 'moderator',
+      role: normalizedRole as 'admin' | 'moderator',
       is_active: true,
       is_verified: true,
       two_factor_enabled: false
@@ -217,7 +214,7 @@ export async function PUT(request: NextRequest) {
 
   const userRepository = getRepositoryFactory(supabase).getUserRepository();
   const userProfile = await userRepository.findById(authUser.id);
-  if (!userProfile || !['SuperAdmin', 'Admin', 'superadmin', 'admin'].includes(userProfile.role)) {
+  if (!userProfile || !isHighAdminRole(userProfile.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -227,6 +224,7 @@ export async function PUT(request: NextRequest) {
   }
 
   const { id, role, isActive, resetPassword } = await request.json();
+  const normalizedRole = typeof role === 'string' ? role.toLowerCase() : undefined;
 
   const target = await userRepository.findById(id);
   if (!target) {
@@ -245,8 +243,12 @@ export async function PUT(request: NextRequest) {
     updates.is_active = isActive;
   }
 
-  if (role) {
-    updates.role = role;
+  if (normalizedRole) {
+    if (!['admin', 'moderator'].includes(normalizedRole)) {
+      return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+    }
+
+    updates.role = normalizedRole;
   }
 
   if (resetPassword) {
@@ -306,7 +308,7 @@ export async function DELETE(request: NextRequest) {
 
   const userRepository = getRepositoryFactory(supabase).getUserRepository();
   const userProfile = await userRepository.findById(authUser.id);
-  if (!userProfile || !['SuperAdmin', 'Admin', 'superadmin', 'admin'].includes(userProfile.role)) {
+  if (!userProfile || !isHighAdminRole(userProfile.role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -319,6 +321,10 @@ export async function DELETE(request: NextRequest) {
   const id = url.searchParams.get('id');
   if (!id) {
     return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+  }
+
+  if (id === authUser.id) {
+    return NextResponse.json({ error: 'You cannot delete your own account.' }, { status: 403 });
   }
 
   // TODO: Add reauth check
