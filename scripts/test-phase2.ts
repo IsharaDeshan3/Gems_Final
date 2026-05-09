@@ -65,7 +65,7 @@ async function runPhase2Tests() {
     // 4. 2FA (TOTP)
     console.log('\n--- 4. 2FA (TOTP) Tests ---');
     const { secret, otpauthUrl } = generate2FASecret('admin@royalgems.com');
-    assert(!!secret && otpauthUrl.includes('royalgems.com'), '2FA Secret generated');
+    assert(!!secret && (otpauthUrl ?? '').includes('royalgems.com'), '2FA Secret generated');
     
     // Using a popular TOTP library (speakeasy is used inside auth.ts)
     // We can't easily guess the current token without generating it, but we can test bad tokens
