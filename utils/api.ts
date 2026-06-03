@@ -1,5 +1,5 @@
 /**
- * API Client for Royal Gems Institute
+ * API Client for Prabha Gems Institute
  * Uses Supabase repositories for data access
  */
 

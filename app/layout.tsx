@@ -24,7 +24,7 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: "Prabha Gem & Jewellery Hub",
+  title: "Prabha Gem & Jewellery",
   description:
     "Sri Lanka's Premier Gemstone and Jewelry institute",
   icons: {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {
-    title: "Prabha Gem & Jewellery Hub",
+    title: "Prabha Gem & Jewellery",
     description: "Sri Lanka's premier gemstone institute",
     type: "website",
   },

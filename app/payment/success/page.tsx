@@ -249,7 +249,7 @@ function PaymentSuccessContent() {
                 <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto mb-6 rounded-full" />
 
                 <p className="text-xl md:text-2xl text-slate-200 max-w-2xl mx-auto">
-                  Thank you for your precious purchase from Prabha Gem & Jewellery Hub
+                  Thank you for your precious purchase from Prabha Gem & Jewellery
                 </p>
               </motion.div>
             </div>
@@ -369,14 +369,14 @@ function PaymentSuccessContent() {
             <p className="text-sm">
               Questions about your order? Contact us at{" "}
               <a
-                href="mailto:support@royalgems.com"
+                href="mailto:support@prabhagems.com"
                 className="text-amber-400 hover:text-amber-300 font-semibold"
               >
-                support@royalgems.com
+                support@prabhagems.com
               </a>
             </p>
             <p className="text-xs mt-2 text-slate-400">
-              © 2024 Prabha Gem & Jewellery Hub. All rights reserved.
+              © 2024 Prabha Gem & Jewellery. All rights reserved.
             </p>
           </motion.div>
         </div>

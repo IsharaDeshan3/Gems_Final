@@ -250,7 +250,7 @@ export class AuthService {
 
       return {
         secret,
-        uri: `otpauth://totp/RoyalGems:${user.email}?secret=${secret}&issuer=RoyalGems`
+        uri: `otpauth://totp/PrabhaGems:${user.email}?secret=${secret}&issuer=PrabhaGems`
       }
     } catch (error) {
       return { error: error instanceof Error ? error.message : 'Unknown error' }

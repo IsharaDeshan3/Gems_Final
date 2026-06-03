@@ -289,7 +289,7 @@ export default function AdminsPage() {
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   type="email"
                   className="h-12 bg-white/60 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600 rounded-xl"
-                  placeholder="admin@royalgems.com"
+                  placeholder="admin@prabhagems.com"
                   required
                 />
               </div>

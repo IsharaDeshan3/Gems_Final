@@ -97,10 +97,10 @@ export default function PaymentCancelPage() {
                   Need help? Contact our support team
                 </p>
                 <a
-                  href="mailto:support@royalgems.com"
+                  href="mailto:support@prabhagems.com"
                   className="text-amber-400 hover:text-amber-300 font-semibold"
                 >
-                  support@royalgems.com
+                  support@prabhagems.com
                 </a>
               </div>
             </div>

@@ -1,5 +1,5 @@
 -- =====================================================
--- Royal Gems Institute - Supabase Database Schema
+-- Prabha Gems Institute - Supabase Database Schema
 -- Migration from MongoDB - Step 3
 -- =====================================================
 

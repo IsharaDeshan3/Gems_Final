@@ -14,9 +14,9 @@ describe('MonthlyHighlight', () => {
   })
 
   it('renders title/subtitle and empty state when no product provided', () => {
-    render(<MonthlyHighlight pageTitle="The Royal Gems" pageSubtitle="Collection" product={null} />)
+    render(<MonthlyHighlight pageTitle="The Prabha Gems" pageSubtitle="Collection" product={null} />)
 
-    expect(screen.getByText('The Royal Gems')).toBeInTheDocument()
+    expect(screen.getByText('The Prabha Gems')).toBeInTheDocument()
     expect(screen.getByText('Collection')).toBeInTheDocument()
     expect(screen.getByText(/No highlight selected yet/i)).toBeInTheDocument()
   })
@@ -26,7 +26,7 @@ describe('MonthlyHighlight', () => {
 
     render(
       <MonthlyHighlight
-        pageTitle="The Royal Jewellery"
+        pageTitle="The Prabha Jewellery"
         pageSubtitle="Collection"
         product={{
           id: 'p1',

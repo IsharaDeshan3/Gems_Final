@@ -29,7 +29,7 @@ async function seedUsers() {
 
   const testUsers = [
     {
-      email: 'admin@royalgems.com',
+      email: 'admin@prabhagems.com',
       password: 'Admin123!@#',
       firstName: 'Admin',
       lastName: 'User',
@@ -243,7 +243,7 @@ async function runSeeding() {
 
     console.log('\n✅ Database seeding complete!');
     console.log('\nTest credentials:');
-    console.log('- Admin: admin@royalgems.com / Admin123!@#');
+    console.log('- Admin: admin@prabhagems.com / Admin123!@#');
     console.log('- Customer: customer@test.com / Customer123!@#');
   } catch (error) {
     console.error('\n❌ Seeding failed:', error);

@@ -257,7 +257,7 @@ export default function AdminLoginPage() {
             <Crown className="h-10 w-10 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">
-            Prabha Gem & Jewellery Hub
+            Prabha Gem & Jewellery
           </h1>
           <p className="text-blue-200 text-lg">Admin Portal</p>
           <div className="flex items-center justify-center mt-4 space-x-2">
@@ -304,7 +304,7 @@ export default function AdminLoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-12 bg-white/10 border-white/20 text-white placeholder:text-blue-200 focus:bg-white/20 focus:border-indigo-400 transition-all duration-300 pl-4 rounded-xl"
-                    placeholder="admin@royalgems.com"
+                    placeholder="admin@prabhagems.com"
                   />
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 pointer-events-none"></div>
                 </div>
@@ -458,7 +458,7 @@ export default function AdminLoginPage() {
           className="text-center mt-8 text-blue-200/60 text-xs"
           style={{ animation: "fadeIn 1s ease-out 0.5s both" }}
         >
-          <p>© 2024 Prabha Gem & Jewellery Hub. All rights reserved.</p>
+          <p>© 2024 Prabha Gem & Jewellery. All rights reserved.</p>
           <p className="mt-1">Secure Admin Access Portal</p>
         </div>
       </div>

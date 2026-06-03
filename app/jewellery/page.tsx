@@ -45,7 +45,7 @@ export default function JewelleryPage() {
 
       <div className="relative z-10">
         <MonthlyHighlight
-          pageTitle="The Royal Jewellery"
+          pageTitle="Prabha Jewellery"
           pageSubtitle="Collection"
           product={highlightProduct}
           onPrimaryCta={() => {

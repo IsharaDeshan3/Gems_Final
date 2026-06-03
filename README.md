@@ -1,4 +1,4 @@
-# Royal Gems Institute
+# Prabha Gems Institute
 
 A modern e-commerce platform for gemstone and jewellery products built with **Next.js 15**, **Supabase**, and **PayHere** payment gateway.
 

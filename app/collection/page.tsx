@@ -177,7 +177,7 @@ function Page() {
         </motion.div>
 
         <MonthlyHighlight
-          pageTitle="The Royal Gems"
+          pageTitle="Prabha Gems"
           pageSubtitle="Collection"
           product={highlightProduct}
           onPrimaryCta={() => {
@@ -249,8 +249,10 @@ function Page() {
 
           <div className="pb-[400px]"></div>
         </section>
+        <section className="lg:snap-start">
+          <Footer />
+        </section>
       </div>
-      <Footer />
     </div>
   );
 }

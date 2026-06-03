@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/FooterPage";
 
 export default function ClientLayout({
   children,
@@ -26,7 +25,6 @@ export default function ClientLayout({
     <>
       {!isAdminRoute && <Navbar />}
       {children}
-      {!isAdminRoute && <Footer />}
     </>
   );
 }

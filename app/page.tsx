@@ -129,7 +129,7 @@ function Page() {
                          bg-gradient-to-r from-white via-amber-200 to-white
                          drop-shadow-[0_0_20px_rgba(252,211,77,0.5)]"
             >
-              Prabha Gem & Jewellery Hub
+              Prabha Gem & Jewellery
             </motion.h2>
 
 
@@ -364,7 +364,7 @@ function Page() {
               {[
                 {
                   icon: Crown,
-                  title: "Royal Heritage",
+                  title: "Prabha Heritage",
                   description:
                     "Gems that have adorned crowns and kingdoms for millennia",
                   highlight: "2000+ Years",
@@ -489,8 +489,10 @@ function Page() {
             </div>
           </section>
         </motion.section>
+        <section className="lg:snap-start">
+          <Footer />
+        </section>
       </div>
-      <Footer />
     </div>
   );
 }

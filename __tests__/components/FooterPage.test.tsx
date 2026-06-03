@@ -5,6 +5,6 @@ describe('FooterPage', () => {
   it('renders without crashing', () => {
     render(<FooterPage />)
     // footer typically contains the brand name somewhere
-    expect(screen.getByText(/Royal Gems/i)).toBeInTheDocument()
+    expect(screen.getByText(/Prabha Gems/i)).toBeInTheDocument()
   })
 })

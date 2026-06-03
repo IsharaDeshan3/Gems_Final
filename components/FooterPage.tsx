@@ -88,25 +88,25 @@ const Footer = () => {
   const socialLinks = [
     {
       icon: Facebook,
-      href: "https://facebook.com/royalgemsinstitute",
+      href: "https://facebook.com/prabhagemsinstitute",
       color: "hover:text-blue-400",
       name: "Facebook",
     },
     {
       icon: Instagram,
-      href: "https://instagram.com/royalgemsinstitute",
+      href: "https://instagram.com/prabhagemsinstitute",
       color: "hover:text-pink-400",
       name: "Instagram",
     },
     {
       icon: Twitter,
-      href: "https://twitter.com/royalgems_lk",
+      href: "https://twitter.com/prabhagems_lk",
       color: "hover:text-blue-300",
       name: "Twitter",
     },
     {
       icon: Youtube,
-      href: "https://youtube.com/royalgemsinstitute",
+      href: "https://youtube.com/prabhagemsinstitute",
       color: "hover:text-red-400",
       name: "YouTube",
     },
@@ -169,7 +169,7 @@ const Footer = () => {
                 </motion.div>
                 <div>
                   <h3 className="text-[1.05rem] font-bold bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">
-                    Royal Gems
+                    Prabha Gems
                   </h3>
                   <p className="text-[0.84rem] text-amber-400 font-medium">
                     Institute

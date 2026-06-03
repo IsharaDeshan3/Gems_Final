@@ -63,8 +63,8 @@ function Navbar() {
             <div className="flex items-center">
               <img
                 src="/images/logo.jpeg"
-                alt="Prabha Gem & Jewellery Hub Logo"
-                className="h-12 w-auto object-contain scale-[2.1]"
+                alt="Prabha Gem & Jewellery Logo"
+                className="h-16 w-auto object-contain scale-[2.1]"
                 style={{ pointerEvents: 'none', filter: 'brightness(1.65)' }}
               />
             </div>

@@ -5,7 +5,7 @@ describe('Navbar', () => {
   it('renders primary navigation links', () => {
     render(<Navbar />)
 
-    expect(screen.getByText('Royal Gems')).toBeInTheDocument()
+    expect(screen.getByAltText('Prabha Gem & Jewellery Logo')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Home/i })).toHaveAttribute('href', '/')
     expect(screen.getByRole('link', { name: /Gems/i })).toHaveAttribute('href', '/gems')
     expect(screen.getByRole('link', { name: /Jewellery/i })).toHaveAttribute('href', '/jewellery')

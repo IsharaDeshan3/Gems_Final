@@ -216,7 +216,7 @@ export default function SettingsPage() {
                         <Select
                           defaultValue={normalizeRole(user.role)}
                           onValueChange={(v) => updateUserRole(user._id || user.id || '', v)}
-                          disabled={user.email === "admin@royalgems.com"}
+                          disabled={user.email === "admin@prabhagems.com"}
                         >
                           <SelectTrigger className="w-[140px]">
                             <SelectValue />
