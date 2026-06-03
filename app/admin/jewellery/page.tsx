@@ -149,15 +149,20 @@ export default function AdminJewelleryPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to fetch jewellery");
+        const data = await res.json().catch(() => ({}));
+        const message =
+          data?.error ||
+          `Failed to fetch jewellery${res.status ? ` (${res.status})` : ""}`;
+        setError(message);
+        return;
       }
 
       const data = await res.json();
       const list = Array.isArray(data?.jewellery) ? data.jewellery : [];
       setItems(list.map(normalizeItem));
     } catch (e: any) {
-      console.error(e);
-      setError(e?.message || "Failed to fetch jewellery");
+      const message = e?.message || "Failed to fetch jewellery";
+      setError(message);
     } finally {
       setLoading(false);
     }
