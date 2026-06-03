@@ -117,20 +117,20 @@ function Page() {
           </div>
 
           <motion.h2
-              initial={{ backgroundPosition: "-200% center" }}
-              animate={{ backgroundPosition: "200% center" }}
-              transition={{ 
-                repeat: Infinity, 
-                duration: 3, 
-                ease: "linear" 
-              }}
-              style={{ backgroundSize: "200% auto" }}
-              className="text-3xl md:text-8xl font-black text-center mx-auto w-fit bg-clip-text text-transparent mb-12 pb-16
+            initial={{ backgroundPosition: "-200% center" }}
+            animate={{ backgroundPosition: "200% center" }}
+            transition={{
+              repeat: Infinity,
+              duration: 3,
+              ease: "linear"
+            }}
+            style={{ backgroundSize: "200% auto" }}
+            className="text-3xl md:text-8xl font-black text-center mx-auto w-fit bg-clip-text text-transparent mb-12 pb-16
                          bg-gradient-to-r from-white via-amber-200 to-white
                          drop-shadow-[0_0_20px_rgba(252,211,77,0.5)]"
-            >
-              Prabha Gem & Jewellery
-            </motion.h2>
+          >
+            Prabha Gem & Jewellery
+          </motion.h2>
 
 
           <div className="max-w-[168em] mx-auto px-4">
@@ -214,7 +214,7 @@ function Page() {
                 </motion.div>
               </motion.div>
 
-              
+
 
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
@@ -229,7 +229,7 @@ function Page() {
                   whileHover={{ scale: 1.02, y: -5 }}
                   transition={{ duration: 0.3 }}
                 >
-                  
+
                   <div className="relative p-8 text-center">
                     <motion.div
                       animate={{ rotate: [0, 360] }}
@@ -247,7 +247,7 @@ function Page() {
                       />
                     </motion.div>
 
-                    
+
                     <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto mb-6 rounded-full" />
 
                     <p className="text-2xl text-slate-200 leading-relaxed max-w-lg mx-auto mb-8">

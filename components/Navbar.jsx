@@ -57,16 +57,18 @@ function Navbar() {
         </div>
 
         {/* Always show compact navbar */}
-        <div className="py-[1.50rem] relative z-10">
+        <div className="py-[0.75rem] md:py-[0.50rem] relative z-10">
           <div className="max-w-[168em] mx-auto px-6 sm:px-12 md:px-24 lg:px-40 flex items-center justify-between">
-            {/* Compact Logo - Left Side */}
+            {/* Logo - Left Side */}
             <div className="flex items-center">
-              <img
-                src="/images/logo.jpeg"
-                alt="Prabha Gem & Jewellery Logo"
-                className="h-16 w-auto object-contain scale-[2.1]"
-                style={{ pointerEvents: 'none', filter: 'brightness(1.65)' }}
-              />
+              <Link href="/">
+                <img
+                  src="/images/logo.jpeg"
+                  alt="Prabha Gem & Jewellery Logo"
+                  className="h-24 md:h-28 w-auto cursor-pointer transition-transform duration-300 hover:scale-105 rounded-xl shadow-2xl"
+                  style={{ filter: 'brightness(1.65)' }}
+                />
+              </Link>
             </div>
 
             {/* Compact Navigation - Right Side */}
